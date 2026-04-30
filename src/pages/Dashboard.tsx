@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { sendBookingConfirmationEmail, sendBookingCancellationEmail } from '../lib/mailgun';
 import { FiCheckCircle, FiTrash2, FiX, FiEdit, FiPlus, FiMinus, FiClock, FiChevronDown } from 'react-icons/fi';
 import { MdOutlineMeetingRoom } from "react-icons/md";
 import { RxCalendar } from "react-icons/rx";
@@ -260,6 +261,17 @@ const Dashboard: React.FC = () => {
           const { error: insErr } = await supabase.from('t_booking_participants').insert(validParts);
           if (insErr) throw insErr;
         }
+
+        // Dispara e-mail de confirmação para o criador e participantes (sem bloquear o fluxo)
+        sendBookingConfirmationEmail({
+          creatorName: profile.nm_profile || 'Responsável',
+          creatorEmail: profile.ds_email || '',
+          roomName: selectedRoom.nm_room,
+          date: currentRoomDate,
+          time: selectedSlot,
+          participants: validParts.map(p => ({ name: p.nm_participant, email: p.ds_email || '' })),
+        }).catch(err => console.error('[mailgun] Erro ao enviar e-mail de confirmação:', err));
+
         toast.success('Agendamento realizado!');
       }
 
@@ -333,9 +345,41 @@ const Dashboard: React.FC = () => {
   const handleConfirmDeleteBooking = async () => {
     if (!bookingToDelete) return;
     try {
+      // Coleta os dados ANTES de deletar para montar o e-mail de cancelamento
+      const bookingRef = bookings.find(b => b.id_booking === bookingToDelete);
+      const roomRef = bookingRef ? rooms.find(r => r.id_room === bookingRef.id_room) : null;
+      const creatorRef = bookingRef
+        ? (allProfiles.find(p => p.id_profile === bookingRef.id_profile) || profile)
+        : null;
+
+      let bookingParticipants: { name: string; email: string }[] = [];
+      if (bookingRef) {
+        const { data: parts } = await supabase
+          .from('t_booking_participants')
+          .select('nm_participant, ds_email')
+          .eq('id_booking', bookingRef.id_booking);
+        if (parts) {
+          bookingParticipants = parts
+            .filter((p: any) => p.nm_participant?.trim())
+            .map((p: any) => ({ name: p.nm_participant, email: p.ds_email || '' }));
+        }
+      }
+
       const { error } = await supabase.from('t_bookings').delete().eq('id_booking', bookingToDelete);
       if (error) throw error;
-      
+
+      // Dispara e-mail de cancelamento (sem bloquear o fluxo)
+      if (bookingRef && roomRef && creatorRef) {
+        sendBookingCancellationEmail({
+          creatorName: creatorRef.nm_profile || 'Responsável',
+          creatorEmail: creatorRef.ds_email || '',
+          roomName: roomRef.nm_room,
+          date: bookingRef.dt_booking,
+          time: bookingRef.hr_time_slot,
+          participants: bookingParticipants,
+        }).catch(err => console.error('[mailgun] Erro ao enviar e-mail de cancelamento:', err));
+      }
+
       toast.success('Reserva excluída com sucesso.');
       setIsBookingConfirmOpen(false);
       setIsEditModalOpen(false);
@@ -493,6 +537,7 @@ const Dashboard: React.FC = () => {
                                 setSelectedRoom(room);
                                 setTempTime(t);
                                 setTempDate(currentRoomDate);
+                                setBookingToEdit(null); // garante modo criação, nunca edição
                                 setParticipants([
                                   { id_participant: '', client: '', name: '', email: '', phone: '' },
                                   { id_participant: '', client: '', name: '', email: '', phone: '' },
