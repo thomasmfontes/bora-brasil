@@ -1,0 +1,340 @@
+.dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.dashboard-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  font-family: var(--font-besley);
+  color: var(--primary-green);
+  font-size: 2rem;
+}
+
+.dashboard-subtitle {
+  margin-top: 1rem;
+  color: #666;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
+}
+
+/* Room Cards Grid */
+.rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.room-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+}
+
+.room-header {
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: white;
+  font-weight: bold;
+}
+
+.room-header.green { background-color: #1F4D29; }
+.room-header.orange { background-color: #E46C3B; }
+.room-header.red { background-color: #D32F2F; }
+
+.room-image-placeholder {
+  width: 100%;
+  height: 150px;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.room-image-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Date Tabs */
+.date-tabs {
+  display: flex;
+  background: #f0f0f0;
+  padding: 0.5rem;
+  gap: 0.5rem;
+}
+
+.date-tab {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  background: white;
+  color: #333;
+}
+
+.date-tab.active {
+  background: #333;
+  color: white;
+}
+
+/* Slots Grid */
+.slots-container {
+  padding: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.slot-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.slot-time {
+  font-family: var(--font-mono);
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.slot-button {
+  width: 40px;
+  height: 30px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.2rem;
+}
+
+.slot-button.available { background-color: var(--status-available); }
+.slot-button.mine { background-color: var(--status-my-booking); }
+.slot-button.occupied { background-color: var(--status-occupied); cursor: not-allowed; }
+
+/* Section Tables */
+.section-card {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  margin-top: 3rem;
+  box-shadow: var(--shadow);
+}
+
+.section-title {
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th {
+  text-align: left;
+  padding: 1rem;
+  background: #f0f0f0;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.data-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+  font-size: 0.9rem;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: white;
+  width: 100%;
+  max-width: 800px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+.modal-header {
+  padding: 1.5rem;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-body {
+  padding: 2rem;
+}
+
+.booking-info-summary {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.info-item label {
+  display: block;
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 0.3rem;
+}
+
+.info-item span {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.participants-section h3 {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.participant-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.participant-inputs {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 2fr 2fr 1.5fr;
+  gap: 0.5rem;
+}
+
+.participant-inputs input {
+  padding: 0.6rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.modal-footer {
+  padding: 1.5rem;
+  background: #f9f9f9;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.btn {
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.btn-cancel { background: #eee; color: #333; }
+.btn-confirm { background: var(--primary-green); color: white; }
+/* Admin Panel Styles */
+.admin-section {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  margin-top: 3rem;
+  box-shadow: var(--shadow);
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.user-role-badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.user-role-badge.admin { background: #E3F2FD; color: #1976D2; }
+.user-role-badge.user { background: #F5F5F5; color: #616161; }
+
+.action-btn {
+  padding: 0.4rem;
+  border-radius: 4px;
+  background: none;
+  font-size: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn.edit { color: var(--status-my-booking); }
+.action-btn.delete { color: #D32F2F; }
+
+/* Permissions Modal */
+.permissions-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.permission-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #eee;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.permission-item:hover { background: #f9f9f9; }
+.permission-item.active { 
+  border-color: var(--primary-green);
+  background: #E8F5E9;
+}
+
+.permission-checkbox {
+  width: 20px;
+  height: 20px;
+}
+
