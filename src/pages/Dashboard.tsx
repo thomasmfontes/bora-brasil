@@ -409,24 +409,34 @@ const Dashboard: React.FC = () => {
   };
   return (
     <>
-      <div className="dashboard-container">
       <header className="main-header">
-        <div className="header-logos">
-          <div className="logo-bora">Bora<br/><span style={{fontSize: '1.5rem', display: 'block', marginTop: '-15px'}}>BRASIL</span></div>
-          <div className="header-divider"></div>
-          <div className="logo-skala">SKALA<span>BRASIL</span><br/><div style={{border: '2px solid white', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', marginTop: '5px'}}>lola</div></div>
+        <div className="orange-bar"></div>
+        
+        <div className="header-content-wrapper">
+          <div className="header-logos-row">
+            <div className="header-left-logo">
+              <img src="/bora-brasil-branco.png" alt="Bora Brasil" className="logo-main" />
+              <div className="event-tag-header">APAS 2026!</div>
+            </div>
+            
+            <div className="header-divider"></div>
+            
+            <div className="header-right-logos">
+              <img src="/skala-lola.png" alt="Skala & Lola" className="logo-secondary" />
+            </div>
+          </div>
         </div>
-        <div className="event-tag">APAS 2026!</div>
       </header>
 
-      <main className="main-portal-card">
-        <div className="portal-title-block">
-          <h2><RxCalendar /> Portal de Agendamentos de Salas</h2>
-          <p className="portal-welcome">
-            <strong>Bem-vindo ao portal de agendamento de salas de reunião – APAS</strong><br/>
-            Este é o canal oficial para reserva das salas de reunião do Grupo Bora Brasil, Skala Brasil e Lola From Rio durante a APAS. Aqui você pode consultar a disponibilidade e garantir seu horário de forma rápida e prática.
-          </p>
-        </div>
+      <div className="dashboard-container">
+        <main className="main-portal-card">
+          <div className="portal-title-block">
+            <h2><RxCalendar /> Portal de Agendamentos de Salas</h2>
+            <p className="portal-welcome">
+              <strong>Bem-vindo ao portal de agendamento de salas de reunião – APAS</strong><br/>
+              Este é o canal oficial para reserva das salas de reunião do Grupo Bora Brasil, Skala Brasil e Lola From Rio durante a APAS. Aqui você pode consultar a disponibilidade e garantir seu horário de forma rápida e prática.
+            </p>
+          </div>
 
         <div className="rooms-grid">
           {rooms.map((room) => {
@@ -434,10 +444,10 @@ const Dashboard: React.FC = () => {
             const name = room.nm_room.toLowerCase();
             const theme = name.includes('bora') ? 'bora' : name.includes('skala') ? 'skala' : name.includes('lola') ? 'lola' : 'bora';
             const imageUrl = name.includes('bora') 
-              ? "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=600"
+              ? "/sala-1.jpg.jpeg"
               : name.includes('skala')
-                ? "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&q=80&w=600"
-                : "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&q=80&w=600";
+                ? "/sala-2.jpg.jpeg"
+                : "/sala-3.jpg.jpeg";
             
             return (
               <div key={room.id_room} className={`room-card ${theme}`} style={{opacity: access ? 1 : 0.7}}>
@@ -527,26 +537,24 @@ const Dashboard: React.FC = () => {
               <TfiEmail className="icon-mail" />
               <p>
                 Confirme sua reserva em poucos cliques.<br/>
-                Em caso de dúvidas ou necessidade de suporte, procure nossa equipe no local. Agradecemos sua organização e desejamos ótimos encontros!
+                Em caso de dúvidas ou necessidade de suporte, procure nossa equipe<br/> no local. Agradecemos sua organização e desejamos ótimos encontros!
               </p>
             </div>
+
             <div className="instruction-item">
               <TfiEmail className="icon-mail" />
-              <p>Após agendar, tanto o solicitante quanto o convidado receberão um e-mail de confirmação.</p>
+              <p>Após agendar, tanto o solicitante quanto o convidado receberão um<br/> e-mail de confirmação.</p>
             </div>
-
           </div>
 
           <div className="footer-brand-area">
-            <div className="brand-bora">
-              <span className="bora-text">Bora</span>
-              <span className="brasil-text">BRASIL</span>
-              <span className="apas-text">APAS 2026!</span>
+            <div className="footer-brand-left">
+              <img src="/bora-brasil.png" alt="Bora Brasil" className="footer-logo-main" />
+              <div className="footer-event-tag">APAS 2026!</div>
             </div>
             <div className="brand-divider"></div>
-            <div className="brand-secondary">
-              <div className="logo-skala-small">SKALA<span>BRASIL</span></div>
-              <div className="logo-lola-circle">lola</div>
+            <div className="footer-brand-right">
+              <img src="/skala-lola-preto.png" alt="Skala & Lola" className="footer-logo-secondary" />
             </div>
           </div>
         </footer>
@@ -608,7 +616,6 @@ const Dashboard: React.FC = () => {
               <thead>
                 <tr>
                   <th>Nome</th>
-                  <th>Login</th>
                   <th>E-mail</th>
                   <th>Grupo</th>
                   <th>Ações</th>
@@ -617,11 +624,9 @@ const Dashboard: React.FC = () => {
               <tbody>
                 {allProfiles.map((p) => {
                   const realEmail = p.ds_email || '—';
-                  const login = p.ds_email ? p.ds_email.split('@')[0] : '—';
                   return (
                     <tr key={p.id_profile}>
                       <td>{p.nm_profile}</td>
-                      <td>{login}</td>
                       <td>{realEmail}</td>
                       <td>{p.ds_role === 'ADMIN' ? 'Administrador' : 'Usuário'}</td>
                       <td>
@@ -658,7 +663,10 @@ const Dashboard: React.FC = () => {
                 <span className="header-dot">●</span> {selectedRoom.nm_room}
               </div>
               
-              <img src={selectedRoom.nm_room.toLowerCase().includes('skala') ? "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=600" : (rooms.indexOf(selectedRoom) === 0 ? "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600" : "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=600")} style={{ width: '100%', height: '250px', objectFit: 'cover' }} />
+              <img 
+                src={selectedRoom.nm_room.toLowerCase().includes('bora') ? "/sala-1.jpg.jpeg" : (selectedRoom.nm_room.toLowerCase().includes('skala') ? "/sala-2.jpg.jpeg" : "/sala-3.jpg.jpeg")} 
+                style={{ width: '100%', height: '250px', objectFit: 'cover', display: 'block' }} 
+              />
               
               <div className="modal-info-bar premium" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', textAlign: 'left' }}>
@@ -1032,11 +1040,11 @@ const Dashboard: React.FC = () => {
         <div className="footer-content">
           <div className="footer-logo-group">
             <span className="footer-label">Idealização:</span>
-            <div className="logo-bora-footer">Bora<span>BRASIL</span></div>
+            <img src="/bora-brasil.png" alt="Bora Brasil" style={{ height: '40px' }} />
           </div>
           <div className="footer-logo-group">
             <span className="footer-label">Realização:</span>
-            <div className="logo-ad-footer">ad<span>latinoamericana</span></div>
+            <img src="/adlatino-logo.png" alt="Ad Latino" style={{ height: '30px' }} />
           </div>
         </div>
       </footer>

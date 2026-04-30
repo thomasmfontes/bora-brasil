@@ -35,10 +35,9 @@
 }
 
 body {
-  background-image: url('/papel-de-parede.png');
+  background-image: url('/background.jpeg');
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
   background-repeat: no-repeat;
 
   font-family: var(--font-text);
@@ -48,92 +47,98 @@ body {
   overflow-x: hidden;
 }
 
+img {
+  max-width: 100%;
+  height: auto;
+}
+
 
 .dashboard-container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1220px;
   margin: 0 auto;
-  padding: 1rem 1rem 0 1rem;
+  padding: 0 1rem 0 1rem;
 }
 
-/* Header Estilizado */
 .main-header {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  background-image: linear-gradient(rgba(31, 77, 41, 0.4), rgba(31, 77, 41, 0.4)), url('/header-bg.jpeg');
+  background-size: cover;
+  background-position: center;
+}
+
+.orange-bar {
+  height: 12px;
+  background-color: var(--accent-orange);
+  width: 100%;
+}
+
+.header-content-wrapper {
+  max-width: 1220px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 2rem;
-  color: white;
 }
 
-.header-logos {
+.header-logos-row {
   display: flex;
   align-items: center;
-  gap: 2rem;
-  margin-bottom: 0.5rem;
+  justify-content: center;
+  gap: 3rem;
 }
 
-@media (max-width: 480px) {
-  .header-logos {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-  }
-  .header-divider {
-    width: 60px;
-    height: 2px;
-  }
-  .logo-bora {
-    font-size: 3rem;
-  }
-  .logo-skala {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+.header-left-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.logo-bora {
-  font-family: var(--font-besley);
-  font-size: 4rem;
-  font-weight: 900;
-  line-height: 1;
+.header-right-logos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo-main {
+  max-height: 150px;
+  width: auto;
+}
+
+.logo-secondary {
+  max-height: 150px;
+  width: auto;
 }
 
 .header-divider {
   width: 2px;
-  height: 60px;
+  height: 120px;
   background: var(--accent-orange);
 }
 
-.logo-skala {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.2rem;
-  text-align: left;
-  line-height: 1;
-}
-
-.logo-skala span {
-  font-size: 0.7rem;
-  font-weight: 400;
-  display: block;
-}
-.event-tag {
-  background: none;
+.event-tag-header {
   color: var(--accent-orange);
-  font-family: var(--font-besley);
+  font-family: var(--font-display);
   font-weight: 900;
-  font-size: 1.8rem;
-  letter-spacing: 2px;
+  font-size: 1.6rem;
+  letter-spacing: 1px;
+  margin-top: 1rem;
+  text-transform: uppercase;
 }
 
-/* Card Principal Branco */
+/* Card Principal */
 .main-portal-card {
-  background: white;
+  background: #FDFBF4; /* Cor creme/palha do mockup */
   border-radius: var(--radius-lg);
   padding: 2rem 1rem;
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  margin-top: -1px; /* Para colar na barra laranja */
   margin-bottom: 2rem;
 }
 
@@ -271,7 +276,7 @@ body {
 
 .room-image {
   width: 100%;
-  height: 180px;
+  height: 238px;
   object-fit: cover;
 }
 
@@ -652,7 +657,6 @@ body {
   }
 }
 
-
 .modal-content {
   background: #F8F9F5;
   width: 100%;
@@ -672,13 +676,12 @@ body {
   justify-content: center;
   gap: 12px;
   font-family: var(--font-display);
-  font-weight: 900;
+  font-weight: 700;
   font-size: 1.3rem;
-  color: #1a3c22;
+  color: var(--primary-green);
   margin-bottom: 1.5rem;
   text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 
 @media (min-width: 768px) {
@@ -1068,7 +1071,8 @@ body {
   .portal-instructions-footer {
     flex-direction: row;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: center;
+    gap: 4rem;
   }
 }
 
@@ -1115,49 +1119,44 @@ body {
 .footer-brand-area {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 2rem;
 }
 
-.brand-bora {
+.footer-brand-left {
   display: flex;
   flex-direction: column;
-  line-height: 0.9;
+  align-items: center;
 }
 
-.brand-bora .bora-text {
-  font-family: var(--font-besley);
-  font-weight: 900;
-  font-size: 3rem;
-  color: #1F4D29;
+.footer-logo-main {
+  height: 85px;
 }
 
-.brand-bora .brasil-text {
-  font-family: var(--font-besley);
-  font-weight: 900;
-  font-size: 1.2rem;
-  color: #1F4D29;
-  letter-spacing: 2px;
-}
-
-.brand-bora .apas-text {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 0.9rem;
+.footer-event-tag {
   color: var(--accent-orange);
-  margin-top: 5px;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 0.95rem;
+  margin-top: 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .brand-divider {
-  width: 1px;
-  height: 80px;
-  background: #ddd;
+  width: 2px;
+  height: 60px;
+  background: var(--accent-orange);
+  opacity: .4;
 }
 
-.brand-secondary {
+.footer-brand-right {
   display: flex;
   flex-direction: column;
-  gap: 10px;
   align-items: center;
+}
+
+.footer-logo-secondary {
+  height: 80px;
 }
 
 .logo-skala-small {
@@ -1416,17 +1415,17 @@ body {
 .footer-orange-bar {
   width: 100%;
   height: 32px;
-  background: #E88E5E;
+  background: var(--accent-orange);
 }
 
 .footer-content {
-  max-width: 1200px;
+  max-width: 1220px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 1.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 4rem;
+  gap: 6rem;
 }
 
 .footer-logo-group {
@@ -1439,35 +1438,6 @@ body {
   font-size: 0.85rem;
   color: #888;
   font-weight: 500;
-}
-
-/* Logo Bora Footer */
-.logo-bora-footer {
-  font-weight: 800;
-  font-size: 1.6rem;
-  color: #1F4D29;
-  line-height: 0.9;
-  letter-spacing: -1px;
-}
-.logo-bora-footer span {
-  display: block;
-  font-size: 0.7rem;
-  letter-spacing: 2px;
-}
-
-/* Logo Ad Footer */
-.logo-ad-footer {
-  font-weight: 800;
-  font-size: 1.6rem;
-  color: #1F4D29;
-  display: flex;
-  align-items: baseline;
-  gap: 2px;
-}
-.logo-ad-footer span {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #00A99D; /* Cor ciano da adlatinoamericana */
 }
 
 @media (max-width: 768px) {

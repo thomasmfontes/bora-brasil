@@ -1,5 +1,5 @@
 .dashboard-container {
-  max-width: 1200px;
+  max-width: 1220px;
   margin: 0 auto;
   padding: 2rem 1rem;
 }
@@ -54,9 +54,9 @@
   font-weight: bold;
 }
 
-.room-header.green { background-color: #1F4D29; }
-.room-header.orange { background-color: #E46C3B; }
-.room-header.red { background-color: #D32F2F; }
+.room-header.green { background-color: #1F4D29; } /* Bora */
+.room-header.orange { background-color: #9EB68D; color: #333; } /* Skala */
+.room-header.red { background-color: #000000; } /* Lola */
 
 .room-image-placeholder {
   width: 100%;
