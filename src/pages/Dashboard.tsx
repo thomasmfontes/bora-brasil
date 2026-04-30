@@ -14,6 +14,94 @@ import { toast } from 'react-hot-toast';
 import { ConfirmModal } from '../components/ConfirmModal';
 
 
+// --- COMPONENTES AUXILIARES (FORA DO RENDER PARA MANTER O FOCO) ---
+
+const formatPhone = (value: string) => {
+  const numbers = value.replace(/\D/g, '');
+  if (numbers.length <= 11) {
+    if (numbers.length <= 2) return numbers;
+    if (numbers.length <= 6) return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+    if (numbers.length <= 10) return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 6)}-${numbers.slice(6)}`;
+    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`;
+  }
+  return value.slice(0, 15);
+};
+
+const CustomSelect = ({ options, value, onChange, placeholder }: any) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const selectedOption = options.find((o: any) => o.value === value);
+
+  return (
+    <div className={`custom-select-container ${isOpen ? 'open' : ''}`} ref={containerRef}>
+      <div className="custom-select-trigger" onClick={() => setIsOpen(!isOpen)}>
+        <span>{selectedOption ? selectedOption.label : placeholder}</span>
+        <FiChevronDown className="custom-select-arrow" />
+      </div>
+      {isOpen && (
+        <div className="custom-select-list">
+          {options.map((opt: any) => (
+            <div
+              key={opt.value}
+              className={`custom-select-item ${opt.value === value ? 'selected' : ''} ${opt.disabled ? 'disabled' : ''}`}
+              onClick={() => {
+                if (opt.disabled) return;
+                onChange(opt.value);
+                setIsOpen(false);
+              }}
+            >
+              {opt.label}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const PhoneInput = ({ value, onChange, placeholder, className }: any) => {
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target;
+    const originalValue = input.value;
+    const selectionStart = input.selectionStart;
+    
+    const formatted = formatPhone(originalValue);
+    onChange(formatted);
+
+    requestAnimationFrame(() => {
+      if (inputRef.current && selectionStart !== null) {
+        const addedMaskChar = formatted.length > originalValue.length;
+        const newPos = addedMaskChar ? selectionStart + (formatted.length - originalValue.length) : selectionStart;
+        inputRef.current.setSelectionRange(newPos, newPos);
+      }
+    });
+  };
+
+  return (
+    <input
+      ref={inputRef}
+      type="text"
+      className={className}
+      placeholder={placeholder}
+      value={value}
+      onChange={handleChange}
+    />
+  );
+};
+
 const Dashboard: React.FC = () => {
   const { profile } = useAuth();
   const [rooms, setRooms] = useState<any[]>([]);
@@ -28,49 +116,6 @@ const Dashboard: React.FC = () => {
   const [isBookingConfirmOpen, setIsBookingConfirmOpen] = useState(false);
   const [bookingToDelete, setBookingToDelete] = useState<string | null>(null);
 
-  // Componente CustomSelect Interno
-  const CustomSelect = ({ options, value, onChange, placeholder }: any) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const containerRef = React.useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-      const handleClickOutside = (event: MouseEvent) => {
-        if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-          setIsOpen(false);
-        }
-      };
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
-
-    const selectedOption = options.find((o: any) => o.value === value);
-
-    return (
-      <div className={`custom-select-container ${isOpen ? 'open' : ''}`} ref={containerRef}>
-        <div className="custom-select-trigger" onClick={() => setIsOpen(!isOpen)}>
-          <span>{selectedOption ? selectedOption.label : placeholder}</span>
-          <FiChevronDown className="custom-select-arrow" />
-        </div>
-        {isOpen && (
-          <div className="custom-select-list">
-            {options.map((opt: any) => (
-              <div
-                key={opt.value}
-                className={`custom-select-item ${opt.value === value ? 'selected' : ''} ${opt.disabled ? 'disabled' : ''}`}
-                onClick={() => {
-                  if (opt.disabled) return;
-                  onChange(opt.value);
-                  setIsOpen(false);
-                }}
-              >
-                {opt.label}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  };
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
 
   const [selectedRoom, setSelectedRoom] = useState<any>(null);
@@ -91,14 +136,14 @@ const Dashboard: React.FC = () => {
   const [tempDate, setTempDate] = useState('');
   const [tempTime, setTempTime] = useState('');
 
-
-
+  // Paginação Usuários
+  const [currentPageUsers, setCurrentPageUsers] = useState(1);
+  const usersPerPage = 5;
 
   const eventDates = ['2026-05-18', '2026-05-19', '2026-05-20', '2026-05-21'];
   const timeSlots = [
     '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'
   ];
-
 
   useEffect(() => {
     if (isModalOpen || isEditModalOpen || isAdminModalOpen || isNewUserModalOpen || isConfirmModalOpen || isBookingConfirmOpen) {
@@ -111,6 +156,12 @@ const Dashboard: React.FC = () => {
     };
   }, [isModalOpen, isEditModalOpen, isAdminModalOpen, isNewUserModalOpen, isConfirmModalOpen, isBookingConfirmOpen]);
 
+  useEffect(() => {
+    const totalPages = Math.ceil(allProfiles.length / usersPerPage);
+    if (currentPageUsers > totalPages && totalPages > 0) {
+      setCurrentPageUsers(totalPages);
+    }
+  }, [allProfiles, currentPageUsers]);
 
   useEffect(() => {
     fetchInitialData();
@@ -143,8 +194,6 @@ const Dashboard: React.FC = () => {
     } catch (e) { console.error(e); }
   };
 
-
-
   const hasAccess = (roomId: string) => profile?.ds_role === 'ADMIN' || userAccess.includes(roomId);
   const getSlotStatus = (roomId: string, time: string, date: string) => {
     const b = bookings.find(x => x.id_room === roomId && x.hr_time_slot === time && x.dt_booking === date);
@@ -154,7 +203,13 @@ const Dashboard: React.FC = () => {
 
   const updateParticipant = (index: number, field: string, value: string) => {
     const newParticipants = [...participants];
-    (newParticipants[index] as any)[field] = value;
+    let finalValue = value;
+    
+    if (field === 'phone') {
+      finalValue = formatPhone(value);
+    }
+
+    (newParticipants[index] as any)[field] = finalValue;
     setParticipants(newParticipants);
   };
 
@@ -667,31 +722,50 @@ const Dashboard: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {allProfiles.map((p) => {
-                  const realEmail = p.ds_email || '—';
-                  return (
-                    <tr key={p.id_profile}>
-                      <td>{p.nm_profile}</td>
-                      <td>{realEmail}</td>
-                      <td>{p.ds_role === 'ADMIN' ? 'Administrador' : 'Usuário'}</td>
-                      <td>
-                        <div className="action-icons">
-                          <FiEdit className="icon-edit" onClick={() => openAdminModal(p)} />
-                          <div className="icon-delete" onClick={() => confirmDeleteUser(p.id_profile)}><FiX /></div>
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })}
+                {(() => {
+                  const indexOfLastUser = currentPageUsers * usersPerPage;
+                  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+                  const currentUsers = allProfiles.slice(indexOfFirstUser, indexOfLastUser);
+
+                  return currentUsers.map((p) => {
+                    const realEmail = p.ds_email || '—';
+                    return (
+                      <tr key={p.id_profile}>
+                        <td>{p.nm_profile}</td>
+                        <td>{realEmail}</td>
+                        <td>{p.ds_role === 'ADMIN' ? 'Administrador' : 'Usuário'}</td>
+                        <td>
+                          <div className="action-icons">
+                            <FiEdit className="icon-edit" onClick={() => openAdminModal(p)} />
+                            <div className="icon-delete" onClick={() => confirmDeleteUser(p.id_profile)}><FiX /></div>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  });
+                })()}
               </tbody>
             </table>
-            <div className="table-pagination">
+            
+            {allProfiles.length > usersPerPage && (
+              <div className="table-pagination">
                 <div className="pagination-pill">
-                <span>Anterior</span>
-                <span className="page-active">1</span>
-                <span>Próximo</span>
+                  <span 
+                    className={`pagination-btn ${currentPageUsers === 1 ? 'disabled' : ''}`}
+                    onClick={() => setCurrentPageUsers(prev => Math.max(prev - 1, 1))}
+                  >
+                    Anterior
+                  </span>
+                  <span className="page-active">{currentPageUsers}</span>
+                  <span 
+                    className={`pagination-btn ${currentPageUsers >= Math.ceil(allProfiles.length / usersPerPage) ? 'disabled' : ''}`}
+                    onClick={() => setCurrentPageUsers(prev => Math.min(prev + 1, Math.ceil(allProfiles.length / usersPerPage)))}
+                  >
+                    Próximo
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </section>
       )}
@@ -762,7 +836,12 @@ const Dashboard: React.FC = () => {
                               <input className="participant-input" placeholder="E-mail" value={p.email} onChange={e => updateParticipant(i, 'email', e.target.value)} />
                             </div>
                             <div className="participant-input-col">
-                              <input className="participant-input" placeholder="Telefone (ddd)" value={p.phone} onChange={e => updateParticipant(i, 'phone', e.target.value)} />
+                              <PhoneInput 
+                                className="participant-input" 
+                                placeholder="(xx) xxxxx-xxxx" 
+                                value={p.phone} 
+                                onChange={(val: string) => updateParticipant(i, 'phone', val)} 
+                              />
                             </div>
                           </div>
                         </td>
@@ -899,7 +978,12 @@ const Dashboard: React.FC = () => {
                               <input className="participant-input" placeholder="E-mail" value={p.email} onChange={e => updateParticipant(i, 'email', e.target.value)} />
                             </div>
                             <div className="participant-input-col">
-                              <input className="participant-input" placeholder="Telefone (ddd)" value={p.phone} onChange={e => updateParticipant(i, 'phone', e.target.value)} />
+                              <PhoneInput 
+                                className="participant-input" 
+                                placeholder="Telefone (ddd)" 
+                                value={p.phone} 
+                                onChange={(val: string) => updateParticipant(i, 'phone', val)} 
+                              />
                             </div>
                           </div>
                         </td>
