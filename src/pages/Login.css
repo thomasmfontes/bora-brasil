@@ -28,22 +28,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4rem;
-  padding: 2rem;
+  gap: clamp(1rem, 5vw, 4rem);
+  padding: clamp(1rem, 3vw, 2rem);
   max-width: 1220px;
   margin: 0 auto;
   width: 100%;
+  transition: all 0.3s ease;
 }
 
 @media (max-width: 768px) {
   .login-header-content {
-    flex-direction: column;
-    gap: 2rem;
-    text-align: center;
+    gap: 1rem;
+    padding: 1rem;
+    justify-content: center;
   }
   
   .login-header-divider {
-    display: none;
+    display: block;
+    height: 100px;
+    width: 1px;
   }
 }
 
@@ -55,8 +58,7 @@
 }
 
 .login-logo-main {
-  max-width: 450px;
-  width: 100%;
+  width: clamp(150px, 35vw, 450px);
   height: auto;
   object-fit: contain;
 }
@@ -64,21 +66,23 @@
 .login-event-tag {
   color: var(--accent-orange);
   font-family: var(--font-display);
-  font-size: 2.2rem;
+  font-size: clamp(1.1rem, 2.5vw, 2.2rem);
   font-weight: 900;
-  margin-top: 1.5rem;
+  margin-top: clamp(0.5rem, 1.5vw, 1.5rem);
+  white-space: nowrap;
 }
 
 @media (max-width: 768px) {
-  .login-logo-main { max-width: 280px; }
-  .login-event-tag { font-size: 1.5rem; }
+  .login-logo-main { max-width: 180px; }
+  .login-event-tag { font-size: 1.1rem; margin-top: 0.5rem; }
 }
 
 /* Divider */
 .login-header-divider {
   width: 2px;
-  height: 200px;
+  height: clamp(80px, 15vw, 200px);
   background-color: var(--accent-orange);
+  opacity: 0.8;
 }
 
 /* Right Section: Logos */
@@ -90,15 +94,12 @@
 }
 
 .login-logo-secondary {
-  max-width: 250px;
-  width: 100%;
+  width: clamp(75px, 13vw, 175px);
   height: auto;
   object-fit: contain;
 }
 
-@media (max-width: 768px) {
-  .login-logo-secondary { max-width: 180px; }
-}
+/* Removidos ajustes fixos de media query para favorecer a fluidez do clamp/vw */
 
 /* Form Section */
 .login-form-section {
