@@ -1168,20 +1168,22 @@ const Dashboard: React.FC = () => {
       <footer className="institutional-footer">
         <div className="footer-orange-bar"></div>
         <div className="footer-content">
-          <div className="footer-logo-group">
-            <span className="footer-label">Idealização:</span>
-            <img src="/bora-brasil.png" alt="Bora Brasil" style={{ height: '40px' }} />
+          <div className="footer-logos-wrapper">
+            <div className="footer-logo-group">
+              <span className="footer-label">Idealização:</span>
+              <img src="/bora-brasil.png" alt="Bora Brasil" style={{ height: '40px' }} />
+            </div>
+            <div className="footer-logo-group">
+              <span className="footer-label">Realização:</span>
+              <img src="/adlatino-logo.png" alt="Ad Latino" style={{ height: '30px' }} />
+            </div>
           </div>
-          <div className="footer-logo-group">
-            <span className="footer-label">Realização:</span>
-            <img src="/adlatino-logo.png" alt="Ad Latino" style={{ height: '30px' }} />
+          
+          <div className="footer-logout-wrapper">
+            <button className="btn-logout-footer" onClick={() => setIsLogoutConfirmOpen(true)}>
+              <FiLogOut /> Sair
+            </button>
           </div>
-        </div>
-        
-        <div className="footer-logout-area">
-          <button className="btn-logout-footer" onClick={() => setIsLogoutConfirmOpen(true)}>
-            <FiLogOut /> Sair
-          </button>
         </div>
       </footer>
       
