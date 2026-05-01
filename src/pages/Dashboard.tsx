@@ -784,8 +784,8 @@ const Dashboard: React.FC = () => {
               </div>
               
               <img 
-                src={selectedRoom.nm_room.toLowerCase().includes('bora') ? "/sala-1.jpg.jpeg" : (selectedRoom.nm_room.toLowerCase().includes('skala') ? "/sala-2.jpg.jpeg" : "/sala-3.jpg.jpeg")} 
-                style={{ width: '100%', height: '250px', objectFit: 'cover', display: 'block' }} 
+                className="modal-banner-img"
+                src={selectedRoom.nm_room.toLowerCase().includes('bora') ? "/bora-brasil-modal.png" : (selectedRoom.nm_room.toLowerCase().includes('skala') ? "/skala-modal.png" : "/lola-modal.png")} 
               />
               
               <div className="modal-info-bar premium" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
@@ -890,7 +890,10 @@ const Dashboard: React.FC = () => {
                 <span className="header-dot">●</span> {selectedRoom.nm_room}
               </div>
               
-              <img src={selectedRoom.nm_room.toLowerCase().includes('skala') ? "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=600" : (rooms.indexOf(selectedRoom) === 0 ? "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600" : "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=600")} style={{ width: '100%', height: '250px', objectFit: 'cover' }} />
+              <img 
+                className="modal-banner-img"
+                src={selectedRoom.nm_room.toLowerCase().includes('bora') ? "/bora-brasil-modal.png" : (selectedRoom.nm_room.toLowerCase().includes('skala') ? "/skala-modal.png" : "/lola-modal.png")} 
+              />
               
               <div className="modal-info-bar premium">
                 <div className="modal-edit-grid">
