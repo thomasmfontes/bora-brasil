@@ -286,8 +286,6 @@ export async function sendBookingCancellationEmail(params: BookingEmailParams): 
         `Hora: ${timeRange}`,
         `Solicitante: ${creatorName}`,
         ``,
-        `Se precisar, acesse o portal para realizar um novo agendamento.`,
-        ``,
         `Bora Brasil – APAS 2026`,
       ].join('\n');
 

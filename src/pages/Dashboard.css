@@ -54,9 +54,22 @@
   font-weight: bold;
 }
 
-.room-header.green { background-color: #1F4D29; } /* Bora */
-.room-header.orange { background-color: #9EB68D; color: #333; } /* Skala */
-.room-header.red { background-color: #000000; } /* Lola */
+.room-header.green {
+  background-color: #1F4D29;
+}
+
+/* Bora */
+.room-header.orange {
+  background-color: #9EB68D;
+  color: #333;
+}
+
+/* Skala */
+.room-header.red {
+  background-color: #000000;
+}
+
+/* Lola */
 
 .room-image-placeholder {
   width: 100%;
@@ -129,9 +142,18 @@
   font-size: 1.2rem;
 }
 
-.slot-button.available { background-color: var(--status-available); }
-.slot-button.mine { background-color: var(--status-my-booking); }
-.slot-button.occupied { background-color: var(--status-occupied); cursor: not-allowed; }
+.slot-button.available {
+  background-color: var(--status-available);
+}
+
+.slot-button.mine {
+  background-color: var(--status-my-booking);
+}
+
+.slot-button.occupied {
+  background-color: var(--status-occupied);
+  cursor: not-allowed;
+}
 
 /* Section Tables */
 .section-card {
@@ -190,7 +212,7 @@
   max-width: 800px;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
 .modal-header {
@@ -266,8 +288,16 @@
   font-size: 0.85rem;
 }
 
-.btn-cancel { background: #eee; color: #333; }
-.btn-confirm { background: var(--primary-green); color: white; }
+.btn-cancel {
+  background: #eee;
+  color: #333;
+}
+
+.btn-confirm {
+  background: var(--primary-green);
+  color: white;
+}
+
 /* Admin Panel Styles */
 .admin-section {
   background: white;
@@ -292,8 +322,15 @@
   text-transform: uppercase;
 }
 
-.user-role-badge.admin { background: #E3F2FD; color: #1976D2; }
-.user-role-badge.user { background: #F5F5F5; color: #616161; }
+.user-role-badge.admin {
+  background: #E3F2FD;
+  color: #1976D2;
+}
+
+.user-role-badge.user {
+  background: #F5F5F5;
+  color: #616161;
+}
 
 .action-btn {
   padding: 0.4rem;
@@ -305,8 +342,13 @@
   justify-content: center;
 }
 
-.action-btn.edit { color: var(--status-my-booking); }
-.action-btn.delete { color: #D32F2F; }
+.action-btn.edit {
+  color: var(--status-my-booking);
+}
+
+.action-btn.delete {
+  color: #D32F2F;
+}
 
 /* Permissions Modal */
 .permissions-grid {
@@ -327,8 +369,11 @@
   transition: all 0.2s;
 }
 
-.permission-item:hover { background: #f9f9f9; }
-.permission-item.active { 
+.permission-item:hover {
+  background: #f9f9f9;
+}
+
+.permission-item.active {
   border-color: var(--primary-green);
   background: #E8F5E9;
 }
@@ -352,7 +397,7 @@
   border: 1px solid #eee;
   border-radius: 50px;
   padding: 0.3rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .pagination-btn {

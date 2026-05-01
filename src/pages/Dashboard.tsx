@@ -534,7 +534,7 @@ const Dashboard: React.FC = () => {
             <h2><RxCalendar /> Portal de Agendamentos de Salas</h2>
             <p className="portal-welcome">
               <strong>Bem-vindo ao portal de agendamento de salas de reunião – APAS</strong><br/>
-              Este é o canal oficial para reserva das salas de reunião do Grupo Bora Brasil, Skala Brasil e Lola From Rio durante a APAS. Aqui você pode consultar a disponibilidade e garantir seu horário de forma rápida e prática.
+              Este é o canal oficial para reserva das salas de reunião do Grupo Bora Brasil, Skala Brasil<br/> e Lola From Rio durante a APAS.<br/> Aqui você pode consultar a disponibilidade e garantir seu horário de forma rápida e prática.
             </p>
           </div>
 
@@ -675,8 +675,8 @@ const Dashboard: React.FC = () => {
                 .map(b => (
                 <tr key={b.id_booking}>
                   <td>
-                    <div style={{ fontWeight: 700, fontSize: '1rem', color: '#1F4D29' }}>{b.hr_time_slot}</div>
-                    <div style={{ fontSize: '0.8rem', color: '#888', marginTop: '2px' }}>
+                    <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--primary-green)' }}>{b.hr_time_slot}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px' }}>
                       {b.dt_booking ? `${b.dt_booking.split('-')[2]}/${b.dt_booking.split('-')[1]}` : ''}
                     </div>
                   </td>
@@ -1002,7 +1002,7 @@ const Dashboard: React.FC = () => {
               
               <button 
                 className="btn-cancel" 
-                style={{ background: '#fff', color: '#d32f2f', borderColor: '#ffcdd2', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }} 
+                style={{ background: 'var(--white)', color: 'var(--primary-red)', borderColor: 'var(--primary-red)', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, opacity: 0.8 }} 
                 onClick={() => handleDelete(bookingToEdit.id_booking)}
               >
                 <FiTrash2 /> EXCLUIR

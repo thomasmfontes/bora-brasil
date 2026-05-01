@@ -2,7 +2,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #fff;
+  background-color: var(--white);
 }
 
 /* Background Section */
@@ -14,7 +14,7 @@
   background-image: url('/header-bg.jpeg');
   background-size: cover;
   background-position: center;
-  color: white;
+  color: var(--white);
 }
 
 .orange-bar {
@@ -104,7 +104,7 @@
 /* Form Section */
 .login-form-section {
   flex: 1;
-  background-color: #fff;
+  background-color: var(--white);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -137,7 +137,7 @@
 .input-group {
   display: flex;
   align-items: center;
-  background-color: #EBEBEB;
+  background-color: var(--table-zebra);
   border-radius: 8px;
   padding: 0.5rem 1rem;
   transition: all 0.3s ease;
@@ -146,7 +146,7 @@
 
 .input-group.input-error {
   background-color: #fff0f0;
-  border-color: #ff3b3b;
+  border-color: var(--primary-red);
 }
 
 .input-icon-wrapper {
@@ -158,7 +158,7 @@
 }
 
 .input-error .input-icon-wrapper {
-  color: #ff3b3b;
+  color: var(--primary-red);
 }
 
 .input-group input {
@@ -167,7 +167,7 @@
   width: 100%;
   padding: 0.5rem 0;
   font-size: 1rem;
-  color: #333;
+  color: var(--text-gray);
 }
 
 .input-group input:focus {
@@ -183,8 +183,8 @@
 }
 
 .login-button-pill {
-  background-color: #0d1b11;
-  color: white;
+  background-color: var(--primary-green);
+  color: var(--white);
   border: none;
   padding: 0.5rem 2rem;
   border-radius: 50px;
@@ -225,7 +225,7 @@
 }
 
 .forgot-password-link {
-  color: #ff3b3b;
+  color: var(--primary-red);
   text-decoration: none;
   font-size: 0.75rem;
   font-weight: bold;
