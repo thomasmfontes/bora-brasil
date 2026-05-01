@@ -870,7 +870,7 @@ const Dashboard: React.FC = () => {
                   { id_participant: '', client: '', name: '', email: '', phone: '' },
                   { id_participant: '', client: '', name: '', email: '', phone: '' }
                 ]);
-              }}>CANCELAR</button>
+              }}>FECHAR</button>
 
 
             </div>
@@ -1008,7 +1008,7 @@ const Dashboard: React.FC = () => {
                 style={{ background: 'var(--white)', color: 'var(--primary-red)', borderColor: 'var(--primary-red)', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, opacity: 0.8 }} 
                 onClick={() => handleDelete(bookingToEdit.id_booking)}
               >
-                <FiTrash2 /> EXCLUIR
+                <FiTrash2 /> CANCELAR
               </button>
 
               <button className="btn-cancel" onClick={() => {
@@ -1021,7 +1021,7 @@ const Dashboard: React.FC = () => {
                   { id_participant: '', client: '', name: '', email: '', phone: '' }
                 ]);
               }}>
-                CANCELAR
+                FECHAR
               </button>
             </div>
           </div>
