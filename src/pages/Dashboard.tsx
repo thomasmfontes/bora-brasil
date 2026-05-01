@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { sendBookingConfirmationEmail, sendBookingCancellationEmail } from '../lib/mailgun';
-import { FiCheckCircle, FiTrash2, FiX, FiEdit, FiPlus, FiMinus, FiClock, FiChevronDown } from 'react-icons/fi';
+import { FiCheckCircle, FiTrash2, FiX, FiEdit, FiPlus, FiMinus, FiClock, FiChevronDown, FiLogOut } from 'react-icons/fi';
 import { MdOutlineMeetingRoom } from "react-icons/md";
 import { RxCalendar } from "react-icons/rx";
 import { TfiEmail } from "react-icons/tfi";
@@ -103,7 +103,7 @@ const PhoneInput = ({ value, onChange, placeholder, className }: any) => {
 };
 
 const Dashboard: React.FC = () => {
-  const { profile } = useAuth();
+  const { profile, signOut } = useAuth();
   const [rooms, setRooms] = useState<any[]>([]);
   const [bookings, setBookings] = useState<any[]>([]);
   const [allProfiles, setAllProfiles] = useState<any[]>([]);
@@ -132,6 +132,7 @@ const Dashboard: React.FC = () => {
   const [isCreatingUser, setIsCreatingUser] = useState(false);
   const [selectedUserAccess, setSelectedUserAccess] = useState<string[]>([]);
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
+  const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
   const [bookingToEdit, setBookingToEdit] = useState<any>(null);
   const [tempDate, setTempDate] = useState('');
   const [tempTime, setTempTime] = useState('');
@@ -146,7 +147,7 @@ const Dashboard: React.FC = () => {
   ];
 
   useEffect(() => {
-    if (isModalOpen || isEditModalOpen || isAdminModalOpen || isNewUserModalOpen || isConfirmModalOpen || isBookingConfirmOpen) {
+    if (isModalOpen || isEditModalOpen || isAdminModalOpen || isNewUserModalOpen || isConfirmModalOpen || isBookingConfirmOpen || isLogoutConfirmOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -154,7 +155,7 @@ const Dashboard: React.FC = () => {
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [isModalOpen, isEditModalOpen, isAdminModalOpen, isNewUserModalOpen, isConfirmModalOpen, isBookingConfirmOpen]);
+  }, [isModalOpen, isEditModalOpen, isAdminModalOpen, isNewUserModalOpen, isConfirmModalOpen, isBookingConfirmOpen, isLogoutConfirmOpen]);
 
   useEffect(() => {
     const totalPages = Math.ceil(allProfiles.length / usersPerPage);
@@ -1176,7 +1177,26 @@ const Dashboard: React.FC = () => {
             <img src="/adlatino-logo.png" alt="Ad Latino" style={{ height: '30px' }} />
           </div>
         </div>
+        
+        <div className="footer-logout-area">
+          <button className="btn-logout-footer" onClick={() => setIsLogoutConfirmOpen(true)}>
+            <FiLogOut /> Sair
+          </button>
+        </div>
       </footer>
+      
+      <ConfirmModal 
+        isOpen={isLogoutConfirmOpen}
+        onClose={() => setIsLogoutConfirmOpen(false)}
+        onConfirm={async () => {
+          await signOut();
+          setIsLogoutConfirmOpen(false);
+        }}
+        title="Sair do Portal"
+        message="Tem certeza que deseja encerrar sua sessão?"
+        confirmText="SIM, SAIR"
+        cancelText="CANCELAR"
+      />
     </>
   );
 };
