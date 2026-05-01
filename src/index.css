@@ -326,6 +326,19 @@ img {
   color: var(--text-gray);
   cursor: pointer;
   border-right: 1px solid var(--border-light);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.date-tab:hover:not(.active) {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.date-tab.active {
+  transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  z-index: 2;
 }
 
 @media (max-width: 400px) {
@@ -351,7 +364,22 @@ img {
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem 1rem;
-  border-bottom: 1px solid #E0E0E0;
+  border-bottom: 1px solid var(--border-light);
+  animation: slotEntrance 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: calc(var(--slot-index, 0) * 0.04s);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+@keyframes slotEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .slot-row:last-child {

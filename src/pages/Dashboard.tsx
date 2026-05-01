@@ -572,18 +572,18 @@ const Dashboard: React.FC = () => {
                     })}
                   </div>
 
-                  <div className="slots-container">
+                  <div className="slots-container" key={roomDates[room.id_room] || eventDates[0]}>
                     {timeSlots.filter(t => {
                       const currentRoomDate = roomDates[room.id_room] || eventDates[0];
                       if (currentRoomDate === '2026-05-21') {
                         return parseInt(t.split(':')[0]) <= 17;
                       }
                       return true;
-                    }).map(t => {
+                    }).map((t, index) => {
                       const currentRoomDate = roomDates[room.id_room] || eventDates[0];
                       const status = getSlotStatus(room.id_room, t, currentRoomDate);
                       return (
-                        <div key={t} className="slot-row">
+                        <div key={t} className="slot-row" style={{ "--slot-index": index } as any}>
                           <span className={`slot-time ${status}`}>{t}</span>
                           <button 
                             className={`slot-btn ${status}`}
