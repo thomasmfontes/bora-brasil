@@ -110,15 +110,15 @@ export const sendBookingConfirmationWhatsApp = async (params: {
   const message = [
     `Olá ${params.toName},`,
     ``,
-    `Você recebeu um convite de ${params.creatorName} para uma reunião no estande da Bora Brasil | Skala Brasil e Lola From Rio:`,
+    `Você recebeu um convite de *${params.creatorName}* para uma reunião no estande da Bora Brasil | Skala Brasil e Lola From Rio:`,
     ``,
-    `Data: ${formattedDate}`,
-    `Hora: ${timeRange}`,
-    `Local: ${EVENT_LOCATION}`,
+    `*Data*: ${formattedDate}`,
+    `*Hora*: ${timeRange}`,
+    `*Local*: ${EVENT_LOCATION}`,
     ``,
     `Aguardamos sua presença`,
     ``,
-    params.creatorPhone ? `Caso precise falar direto com o organizador, entre em contato: ${params.creatorPhone}` : `Este é um disparo automático.`
+    params.creatorPhone ? `Caso necessário, fale diretamente com o organizador no whatsapp: ${params.creatorPhone}` : `Esta é uma mensagem automática.`
   ].join('\n');
   
   return sendWhatsAppMessage({ phone: params.phone, message });
@@ -141,12 +141,12 @@ export const sendBookingCancellationWhatsApp = async (params: {
   const message = [
     `Olá ${params.toName},`,
     ``,
-    `Informamos que a reserva abaixo foi CANCELADA:`,
+    `Informamos que a reserva abaixo foi *CANCELADA*:`,
     ``,
-    `Sala: ${params.roomName}`,
-    `Data: ${formattedDate}`,
-    `Hora: ${timeRange}`,
-    `Solicitante: ${params.canceledBy}`,
+    `*Sala*: ${params.roomName}`,
+    `*Data*: ${formattedDate}`,
+    `*Hora*: ${timeRange}`,
+    `*Solicitante*: ${params.canceledBy}`,
     ``,
     `Bora Brasil – APAS 2026`
   ].join('\n');
