@@ -75,7 +75,7 @@ const MONTH_NAMES = [
   'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
 ];
 
-const EVENT_LOCATION = 'Estande Skala Cosméticos, APAS 2026\nAv. 1201, Pavilhão Verde, Expo Center Norte - São Paulo';
+const EVENT_LOCATION = 'Estande Bora Brasil | Skala Brasil e Lola From Rio\nAv. 1201, Pavilhão Verde, Expo Center Norte - São Paulo';
 
 /** Formata 'YYYY-MM-DD' → '18 de maio de 2026' */
 function formatDateLong(date: string): string {
@@ -102,6 +102,7 @@ export const sendBookingConfirmationWhatsApp = async (params: {
   date: string;
   time: string;
   creatorName: string;
+  creatorPhone?: string;
 }) => {
   const formattedDate = formatDateLong(params.date);
   const timeRange = formatTimeRange(params.time);
@@ -109,13 +110,15 @@ export const sendBookingConfirmationWhatsApp = async (params: {
   const message = [
     `Olá ${params.toName},`,
     ``,
-    `Você recebeu um convite do ${params.creatorName} para uma reunião na Sala ${params.roomName} no estande da APAS 2026:`,
+    `Você recebeu um convite de ${params.creatorName} para uma reunião no estande da Bora Brasil | Skala Brasil e Lola From Rio:`,
     ``,
     `Data: ${formattedDate}`,
     `Hora: ${timeRange}`,
     `Local: ${EVENT_LOCATION}`,
     ``,
-    `Aguardamos sua presença`
+    `Aguardamos sua presença`,
+    ``,
+    params.creatorPhone ? `Caso precise falar direto com o organizador, entre em contato: ${params.creatorPhone}` : `Este é um disparo automático.`
   ].join('\n');
   
   return sendWhatsAppMessage({ phone: params.phone, message });

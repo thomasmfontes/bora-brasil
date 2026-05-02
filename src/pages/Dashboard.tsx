@@ -356,7 +356,8 @@ const Dashboard: React.FC = () => {
             roomName: selectedRoom.nm_room,
             date: currentRoomDate,
             time: selectedSlot,
-            creatorName: profile.nm_profile || 'Responsável'
+            creatorName: profile.nm_profile || 'Responsável',
+            creatorPhone: profile.nu_phone
           }).catch(err => console.error('[whatsapp] Erro ao enviar WhatsApp para criador:', err));
         }
 
@@ -369,7 +370,8 @@ const Dashboard: React.FC = () => {
               roomName: selectedRoom.nm_room,
               date: currentRoomDate,
               time: selectedSlot,
-              creatorName: profile.nm_profile || 'Responsável'
+              creatorName: profile.nm_profile || 'Responsável',
+              creatorPhone: profile.nu_phone
             }).catch(err => console.error('[whatsapp] Erro ao enviar WhatsApp para participante:', err));
           }
         });

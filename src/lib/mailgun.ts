@@ -67,10 +67,10 @@ const MONTH_NAMES = [
   'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
 ];
 
-const EVENT_LOCATION = 'Estande Skala Cosméticos, APAS 2026\nAv. 1201, Pavilhão Verde, Expo Center Norte - São Paulo';
+const EVENT_LOCATION = 'Estande Bora Brasil | Skala Brasil e Lola From Rio\nAv. 1201, Pavilhão Verde, Expo Center Norte - São Paulo';
 
 // Localização no formato ICS (vírgulas escapadas com \)
-const ICS_LOCATION = 'Estande Skala Cosméticos\\, APAS 2026\\, Av. 1201\\, Pavilhão Verde\\, Expo Center Norte - São Paulo';
+const ICS_LOCATION = 'Estande Bora Brasil | Skala Brasil e Lola From Rio\\, Av. 1201\\, Pavilhão Verde\\, Expo Center Norte - São Paulo';
 
 interface BookingEmailParams {
   creatorName: string;
@@ -232,7 +232,7 @@ export async function sendBookingConfirmationEmail(params: BookingEmailParams): 
       const text = [
         `Olá ${name},`,
         ``,
-        `Você recebeu um convite do ${creatorName} para uma reunião na Sala ${roomName} no estande da APAS 2026:`,
+        `Você recebeu um convite de ${creatorName} para uma reunião no estande da Bora Brasil | Skala Brasil e Lola From Rio:`,
         ``,
         `Data: ${formattedDate}`,
         `Hora: ${timeRange}`,
