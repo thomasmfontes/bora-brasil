@@ -4,6 +4,7 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 
@@ -1065,7 +1066,7 @@ img {
   background: var(--primary-green);
   color: white;
   padding: 0.8rem 2.5rem;
-  border-radius: 50px;
+  border-radius: 15px;
   font-weight: 900;
   text-transform: uppercase;
   border: none;
@@ -1643,4 +1644,346 @@ img {
 
 .btn-logout-footer svg {
   font-size: 1.1rem;
+}
+/* Modal Tabs */
+.modal-tabs {
+  display: flex;
+  background: var(--bg-table-header);
+  border-bottom: 1px solid var(--border-main);
+}
+
+.modal-tab {
+  flex: 1;
+  padding: 1.2rem;
+  text-align: center;
+  font-weight: 900;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  color: var(--text-gray);
+  cursor: pointer;
+  transition: all 0.2s;
+  border-right: 1px solid var(--border-main);
+}
+
+.modal-tab:last-child {
+  border-right: none;
+}
+
+.modal-tab.active {
+  background: var(--white);
+  color: var(--primary-green);
+  position: relative;
+}
+
+.modal-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--accent-orange);
+}
+
+.modal-tab:hover:not(.active) {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.edit-user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mobile-First Admin Modal Enhancements */
+.modal-admin-header {
+  margin: 0 !important;
+  border-radius: 0 !important;
+  height: auto !important;
+  padding: 1.2rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 1rem !important;
+  position: relative;
+}
+
+.header-title-container {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  flex: 1;
+}
+
+.header-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  opacity: 0.8;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.header-user-name {
+  font-size: 1.2rem;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.modal-close-x {
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-close-x:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.modal-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 1rem 0.5rem !important;
+  font-size: 0.85rem !important;
+}
+
+@media (max-width: 480px) {
+  .modal-overlay.modal-permissions {
+    padding: 0;
+    align-items: flex-end;
+  }
+  
+  .modal-overlay.modal-permissions .modal-content {
+    max-width: 100% !important;
+    border-radius: 25px 25px 0 0 !important;
+    margin: 0;
+    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .modal-body {
+    padding: 1.5rem !important;
+  }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* Fluid Tab Transitions */
+.tab-content-wrapper {
+  animation: tabEntrance 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes tabEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-tab {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.modal-tab.active {
+  color: var(--primary-green) !important;
+  background: var(--white) !important;
+}
+
+/* Smooth Indicator */
+.modal-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 4px;
+  background: var(--accent-orange);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(-50%);
+}
+
+.modal-tab.active::after {
+  width: 100%;
+}
+
+/* Fluid Tab Transitions (Matching Slot Entrance Style) */
+.modal-tab-content-wrapper {
+  animation: slotEntrance 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  will-change: opacity, transform;
+}
+
+.modal-tab {
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s ease !important;
+}
+
+.modal-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 4px;
+  background: var(--accent-orange);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(-50%);
+}
+
+.modal-tab.active {
+  color: var(--primary-green) !important;
+}
+
+.modal-tab.active::after {
+  width: 100%;
+}
+
+/* Refined Admin Modal Animations */
+.modal-tab-content-wrapper {
+  animation: none !important;
+}
+
+.staggered-field {
+  animation: slotEntrance 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: calc(var(--field-index, 0) * 0.05s);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* Refined Orange Underline Tabs */
+.modal-tabs {
+  display: flex;
+  background: #fcfcfc !important;
+  border-bottom: 2px solid #eee;
+  padding: 0 !important;
+  gap: 0;
+  position: relative;
+}
+
+.modal-tab {
+  flex: 1;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 1.2rem !important;
+  color: #999 !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease !important;
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.modal-tab::after {
+  display: none !important;
+}
+
+.tab-indicator {
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 50%;
+  height: 4px;
+  background: var(--primary-orange);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 3;
+  pointer-events: none;
+}
+
+.tab-indicator.dados {
+  transform: translateX(0);
+}
+
+.tab-indicator.permissoes {
+  transform: translateX(100%);
+}
+
+.modal-tab.active {
+  background: transparent !important;
+  color: var(--primary-green) !important;
+  box-shadow: none !important;
+}
+
+.modal-tab:hover {
+  color: #666 !important;
+  background: #f8f8f8 !important;
+}
+
+/* Fix Select z-index issue */
+.custom-select-container.open {
+  z-index: 100 !important;
+}
+
+.admin-input-group.staggered-field {
+  position: relative;
+  /* Ensure select list is not hidden */
+  overflow: visible !important;
+}
+
+/* Also ensure the modal body doesn't clip the dropdown */
+.modal-body {
+  overflow: visible !important;
+}
+
+/* Fix dropdown overlapping */
+.admin-input-group.staggered-field {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-input-group.staggered-field:focus-within {
+  z-index: 10 !important;
+}
+
+.custom-select-container.open {
+  z-index: 1000 !important;
+}
+
+
+.custom-select-trigger:focus {
+  outline: none;
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 3px rgba(31, 77, 41, 0.1);
+}
+
+@media (max-width: 480px) {
+  .hide-mobile-text {
+    display: none;
+  }
+  .btn-new-user-responsive {
+    width: 48px !important;
+    height: 48px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 50% !important;
+    min-width: unset !important;
+  }
+  .btn-new-user-responsive svg {
+    font-size: 1.5rem;
+    margin: 0 !important;
+  }
 }

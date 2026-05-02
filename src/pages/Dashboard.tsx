@@ -52,7 +52,17 @@ const CustomSelect = ({ options, value, onChange, placeholder }: any) => {
 
   return (
     <div className={`custom-select-container ${isOpen ? 'open' : ''}`} ref={containerRef}>
-      <div className="custom-select-trigger" onClick={() => setIsOpen(!isOpen)}>
+      <div 
+        className="custom-select-trigger" 
+        onClick={() => setIsOpen(!isOpen)} 
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setIsOpen(!isOpen);
+          }
+        }}
+      >
         <span>{selectedOption ? selectedOption.label : placeholder}</span>
         <FiChevronDown className="custom-select-arrow" />
       </div>
@@ -137,6 +147,9 @@ const Dashboard: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [newUserForm, setNewUserForm] = useState({ nm_profile: '', email: '', password: '', ds_role: 'USER', nu_phone: '' });
   const [isCreatingUser, setIsCreatingUser] = useState(false);
+  const [activeAdminTab, setActiveAdminTab] = useState<'dados' | 'permissoes'>('dados');
+  const [editUserForm, setEditUserForm] = useState({ nm_profile: '', email: '', password: '', ds_role: 'USER', nu_phone: '' });
+  const [isUpdatingUser, setIsUpdatingUser] = useState(false);
   const [selectedUserAccess, setSelectedUserAccess] = useState<string[]>([]);
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
@@ -533,6 +546,37 @@ const Dashboard: React.FC = () => {
       setIsCreatingUser(false);
     }
   };
+
+  const handleUpdateUser = async () => {
+    if (!editUserForm.nm_profile || !editUserForm.email) {
+      toast.error('Nome e E-mail são obrigatórios.');
+      return;
+    }
+    setIsUpdatingUser(true);
+    try {
+      const { data, error } = await supabase.rpc('update_user_admin', {
+        p_id_profile: selectedProfileForEdit.id_profile,
+        p_nm_profile: editUserForm.nm_profile,
+        p_email: editUserForm.email,
+        p_password: editUserForm.password || null,
+        p_ds_role: editUserForm.ds_role,
+        p_nu_phone: editUserForm.nu_phone
+      });
+      
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      
+      toast.success('Usuário atualizado com sucesso!');
+      setIsAdminModalOpen(false);
+      setSelectedProfileForEdit(null);
+      setSelectedUserAccess([]);
+      await fetchInitialData();
+    } catch (e: any) {
+      toast.error('Erro ao atualizar usuário: ' + e.message);
+    } finally {
+      setIsUpdatingUser(false);
+    }
+  };
   const handleDeleteUser = async () => {
     console.log('CHAMANDO RPC delete_user_complete para:', userToDelete);
     if (!userToDelete) {
@@ -567,10 +611,24 @@ const Dashboard: React.FC = () => {
 
   const openAdminModal = async (p: any) => {
     setSelectedProfileForEdit(p);
+    setEditUserForm({ 
+      nm_profile: p.nm_profile || '', 
+      email: p.ds_email || '', 
+      password: '', 
+      ds_role: p.ds_role || 'USER',
+      nu_phone: p.nu_phone || ''
+    });
     const { data: acc } = await supabase.from('t_user_room_access').select('id_room').eq('id_profile', p.id_profile);
     if (acc) setSelectedUserAccess(acc.map(a => a.id_room));
+    setActiveAdminTab('dados');
     setIsAdminModalOpen(true);
   };
+
+  const handleOpenNewUser = () => {
+    setNewUserForm({ nm_profile: '', email: '', password: '', ds_role: 'USER', nu_phone: '' });
+    setIsNewUserModalOpen(true);
+  };
+
   return (
     <>
       <header className="main-header">
@@ -771,8 +829,8 @@ const Dashboard: React.FC = () => {
         <section className="users-section">
           <div className="users-header">
             <h2 className="users-title">Gestão de Usuários</h2>
-            <button className="btn-new-user" onClick={() => setIsNewUserModalOpen(true)}>
-              <FiPlus /> <span className="btn-text">Novo Usuário</span>
+            <button className="btn-confirm btn-new-user-responsive" onClick={handleOpenNewUser}>
+              <FiPlus /> <span className="hide-mobile-text">NOVO USUÁRIO</span>
             </button>
           </div>
           
@@ -1096,71 +1154,148 @@ const Dashboard: React.FC = () => {
       {isAdminModalOpen && selectedProfileForEdit && (
         <div className="modal-overlay modal-permissions">
           <div className="modal-content" style={{ maxWidth: '460px', padding: 0, overflow: 'hidden' }}>
-            <div className="unified-header bora" style={{ margin: 0, borderRadius: 0, height: '70px' }}>
-              <span className="header-dot">●</span> Permissões: {selectedProfileForEdit.nm_profile}
+            <div className="unified-header bora modal-admin-header">
+              <span className="header-dot">●</span> 
+              <div className="header-title-container">
+                <span className="header-label">Gestão de Usuário</span>
+                <span className="header-user-name">{selectedProfileForEdit.nm_profile}</span>
+              </div>
+              <button className="modal-close-x" onClick={() => setIsAdminModalOpen(false)}><FiX /></button>
             </div>
              
-            <div className="modal-body" style={{ padding: '2.5rem 2rem' }}>
-               <div className="permission-list">
-                  {rooms.map(r => (
-                    <label key={r.id_room} className="permission-item">
-                      <input 
-                        type="checkbox" 
-                        checked={selectedUserAccess.includes(r.id_room)} 
-                        onChange={async (e) => {
-                          const isChecked = e.target.checked;
-                          if (isChecked) {
-                            setSelectedUserAccess(prev => [...prev, r.id_room]);
-                            const { error } = await supabase.from('t_user_room_access').insert({ 
-                              id_profile: selectedProfileForEdit.id_profile, 
-                              id_room: r.id_room 
-                            });
-                            if (error) {
-                              setSelectedUserAccess(prev => prev.filter(id => id !== r.id_room));
-                              toast.error('Erro ao adicionar permissão');
-                            } else {
-                              toast.success(`Acesso à ${r.nm_room} liberado`);
-                            }
-                          } else {
-                            setSelectedUserAccess(prev => prev.filter(id => id !== r.id_room));
-                            const { error } = await supabase.from('t_user_room_access')
-                              .delete()
-                              .eq('id_profile', selectedProfileForEdit.id_profile)
-                              .eq('id_room', r.id_room);
-                            if (error) {
-                              setSelectedUserAccess(prev => [...prev, r.id_room]);
-                              toast.error('Erro ao remover permissão');
-                            } else {
-                              toast.success(`Acesso à ${r.nm_room} removido`);
-                            }
-                          }
-                          await fetchInitialData();
-                        }} 
-                      />
-                      <span className="permission-label">{r.nm_room}</span>
-                    </label>
-                  ))}
-               </div>
+            <div className="modal-tabs">
+              <button 
+                className={`modal-tab ${activeAdminTab === 'dados' ? 'active' : ''}`} 
+                onClick={() => setActiveAdminTab('dados')}
+              >
+                <FiEdit /> DADOS
+              </button>
+              <button 
+                className={`modal-tab ${activeAdminTab === 'permissoes' ? 'active' : ''}`} 
+                onClick={() => setActiveAdminTab('permissoes')}
+              >
+                <MdOutlineMeetingRoom /> PERMISSÕES
+              </button>
+              <div className={`tab-indicator ${activeAdminTab}`} />
+            </div>
+             
+            <div className="modal-body" style={{ padding: '2rem' }}>
+               <div key={activeAdminTab} className="modal-tab-content-wrapper">
+                 {activeAdminTab === 'dados' ? (
+                   <div className="edit-user-details">
+                      <div className="admin-input-group staggered-field" style={{"--field-index": 0} as any}>
+                        <label className="admin-label">Nome Completo</label>
+                        <input 
+                          className="admin-input"
+                          placeholder="Nome do usuário" 
+                          value={editUserForm.nm_profile} 
+                          onChange={e => setEditUserForm({ ...editUserForm, nm_profile: e.target.value })} 
+                        />
+                      </div>
 
-               <div className="admin-input-group" style={{ marginBottom: '1.5rem' }}>
-                  <label className="admin-label"><FiPhone style={{marginRight: '8px'}} /> Telefone (WhatsApp)</label>
-                  <PhoneInput 
-                    className="admin-input"
-                    placeholder="(ddd) 99999-9999" 
-                    value={selectedProfileForEdit.nu_phone || ''} 
-                    onChange={async (val: string) => {
-                      const updated = { ...selectedProfileForEdit, nu_phone: val };
-                      setSelectedProfileForEdit(updated);
-                      // Atualiza no banco imediatamente ao mudar (estratégia simples para esse dashboard)
-                      await supabase.from('t_profiles').update({ nu_phone: val }).eq('id_profile', selectedProfileForEdit.id_profile);
-                    }} 
-                  />
-               </div>
+                      <div className="admin-input-group staggered-field" style={{"--field-index": 1} as any}>
+                        <label className="admin-label">E-mail</label>
+                        <input 
+                          className="admin-input"
+                          type="email"
+                          placeholder="email@exemplo.com" 
+                          value={editUserForm.email} 
+                          onChange={e => setEditUserForm({ ...editUserForm, email: e.target.value })} 
+                        />
+                      </div>
 
-               <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
-                  <button className="btn-confirm" style={{width: '100%'}} onClick={() => { setIsAdminModalOpen(false); setSelectedUserAccess([]); }}>
-                    CONCLUIR
-                  </button>
+                      <div className="admin-input-group staggered-field" style={{"--field-index": 2} as any}>
+                        <label className="admin-label">Nova Senha (opcional)</label>
+                        <input 
+                          className="admin-input"
+                          type="password"
+                          placeholder="Deixe em branco para manter" 
+                          value={editUserForm.password} 
+                          onChange={e => setEditUserForm({ ...editUserForm, password: e.target.value })} 
+                        />
+                      </div>
+
+                      <div className="admin-input-group staggered-field" style={{"--field-index": 3} as any}>
+                        <label className="admin-label">Grupo</label>
+                        <CustomSelect 
+                          options={[
+                            { value: 'USER', label: 'Usuário' },
+                            { value: 'ADMIN', label: 'Administrador' }
+                          ]}
+                          value={editUserForm.ds_role}
+                          onChange={(val: string) => setEditUserForm({ ...editUserForm, ds_role: val })}
+                        />
+                      </div>
+
+                      <div className="admin-input-group staggered-field" style={{"--field-index": 4} as any}>
+                        <label className="admin-label"><FiPhone style={{marginRight: '8px'}} /> Telefone (WhatsApp)</label>
+                        <PhoneInput 
+                          className="admin-input"
+                          placeholder="(ddd) 99999-9999" 
+                          value={editUserForm.nu_phone} 
+                          onChange={(val: string) => setEditUserForm({ ...editUserForm, nu_phone: val })} 
+                        />
+                      </div>
+
+                      <button 
+                        className="btn-confirm" 
+                        style={{width: '100%', marginTop: '1rem'}} 
+                        onClick={handleUpdateUser}
+                        disabled={isUpdatingUser}
+                      >
+                        {isUpdatingUser ? <><div className="spinner"></div> SALVANDO...</> : 'SALVAR DADOS'}
+                      </button>
+                   </div>
+                 ) : (
+                   <>
+                     <div className="permission-list">
+                        {rooms.map((r, idx) => (
+                          <label key={r.id_room} className="permission-item staggered-field" style={{"--field-index": idx} as any}>
+                            <input 
+                              type="checkbox" 
+                              checked={selectedUserAccess.includes(r.id_room)} 
+                              onChange={async (e) => {
+                                const isChecked = e.target.checked;
+                                if (isChecked) {
+                                  setSelectedUserAccess(prev => [...prev, r.id_room]);
+                                  const { error } = await supabase.from('t_user_room_access').insert({ 
+                                    id_profile: selectedProfileForEdit.id_profile, 
+                                    id_room: r.id_room 
+                                  });
+                                  if (error) {
+                                    setSelectedUserAccess(prev => prev.filter(id => id !== r.id_room));
+                                    toast.error('Erro ao adicionar permissão');
+                                  } else {
+                                    toast.success(`Acesso à ${r.nm_room} liberado`);
+                                  }
+                                } else {
+                                  setSelectedUserAccess(prev => prev.filter(id => id !== r.id_room));
+                                  const { error } = await supabase.from('t_user_room_access')
+                                    .delete()
+                                    .eq('id_profile', selectedProfileForEdit.id_profile)
+                                    .eq('id_room', r.id_room);
+                                  if (error) {
+                                    setSelectedUserAccess(prev => [...prev, r.id_room]);
+                                    toast.error('Erro ao remover permissão');
+                                  } else {
+                                    toast.success(`Acesso à ${r.nm_room} removido`);
+                                  }
+                                }
+                                await fetchInitialData();
+                              }} 
+                            />
+                            <span className="permission-label">{r.nm_room}</span>
+                          </label>
+                        ))}
+                     </div>
+
+                     <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+                        <button className="btn-confirm" style={{width: '100%'}} onClick={() => { setIsAdminModalOpen(false); setSelectedUserAccess([]); }}>
+                          CONCLUIR
+                        </button>
+                     </div>
+                   </>
+                 )}
                </div>
              </div>
           </div>
@@ -1168,13 +1303,18 @@ const Dashboard: React.FC = () => {
       )}
 
       {isNewUserModalOpen && (
-        <div className="modal-overlay modal-new-user">
+        <div className="modal-overlay modal-permissions modal-new-user">
           <div className="modal-content" style={{ maxWidth: '460px', padding: 0, overflow: 'hidden' }}>
-            <div className="unified-header bora" style={{ margin: 0, borderRadius: 0, height: '70px' }}>
-              <span className="header-dot">●</span> Novo Usuário
+            <div className="unified-header bora modal-admin-header">
+              <span className="header-dot">●</span> 
+              <div className="header-title-container">
+                <span className="header-label">Administrativo</span>
+                <span className="header-user-name">Novo Usuário</span>
+              </div>
+              <button className="modal-close-x" onClick={() => setIsNewUserModalOpen(false)}><FiX /></button>
             </div>
-            <div className="modal-body" style={{ padding: '2.5rem 2rem' }}>
-              <div className="admin-input-group">
+            <div className="modal-body" style={{ padding: '2rem' }}>
+              <div className="admin-input-group staggered-field" style={{"--field-index": 0} as any}>
                 <label className="admin-label">Nome Completo *</label>
                 <input 
                   className="admin-input"
@@ -1184,29 +1324,31 @@ const Dashboard: React.FC = () => {
                 />
               </div>
 
-              <div className="admin-input-group">
+              <div className="admin-input-group staggered-field" style={{"--field-index": 1} as any}>
                 <label className="admin-label">E-mail *</label>
                 <input 
                   className="admin-input"
                   type="email"
+                  autoComplete="none"
                   placeholder="email@exemplo.com" 
                   value={newUserForm.email} 
                   onChange={e => setNewUserForm({ ...newUserForm, email: e.target.value })} 
                 />
               </div>
 
-              <div className="admin-input-group">
+              <div className="admin-input-group staggered-field" style={{"--field-index": 2} as any}>
                 <label className="admin-label">Senha *</label>
                 <input 
                   className="admin-input"
                   type="password"
+                  autoComplete="new-password"
                   placeholder="••••••" 
                   value={newUserForm.password} 
                   onChange={e => setNewUserForm({ ...newUserForm, password: e.target.value })} 
                 />
               </div>
 
-               <div className="admin-input-group">
+               <div className="admin-input-group staggered-field" style={{"--field-index": 3} as any}>
                 <label className="admin-label"><FiPhone style={{marginRight: '8px'}} /> Telefone (WhatsApp)</label>
                 <PhoneInput 
                   className="admin-input"
@@ -1216,7 +1358,7 @@ const Dashboard: React.FC = () => {
                 />
               </div>
 
-              <div className="admin-input-group">
+              <div className="admin-input-group staggered-field" style={{"--field-index": 4} as any}>
                 <label className="admin-label">Grupo</label>
                 <CustomSelect 
                   options={[
@@ -1228,10 +1370,10 @@ const Dashboard: React.FC = () => {
                 />
               </div>
               <div className="modal-buttons" style={{marginTop: '1.5rem'}}>
-                <button className="btn-confirm" onClick={handleCreateUser} disabled={isCreatingUser}>
-                  {isCreatingUser ? <><div className="spinner"></div> CRIANDO...</> : 'CRIAR USUÁRIO'}
+                <button className="btn-confirm" style={{flex: 1}} onClick={handleCreateUser} disabled={isCreatingUser}>
+                  {isCreatingUser ? <><div className="spinner"></div> CRIANDO...</> : 'CRIAR'}
                 </button>
-                <button className="btn-cancel" onClick={() => { setIsNewUserModalOpen(false); setNewUserForm({ nm_profile: '', email: '', password: '', ds_role: 'USER', nu_phone: '' }); }}>CANCELAR</button>
+                <button className="btn-cancel" style={{flex: 1}} onClick={() => { setIsNewUserModalOpen(false); setNewUserForm({ nm_profile: '', email: '', password: '', ds_role: 'USER', nu_phone: '' }); }}>CANCELAR</button>
               </div>
             </div>
           </div>
