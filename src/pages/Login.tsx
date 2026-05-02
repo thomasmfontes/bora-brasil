@@ -53,6 +53,34 @@ const Login: React.FC = () => {
     }
   };
 
+  const handleForgotPassword = async () => {
+    if (!email) {
+      return toast.error('Por favor, digite seu e-mail primeiro.');
+    }
+
+    const toastId = toast.loading('Verificando e-mail...');
+    try {
+      // Verifica se o perfil existe no banco antes de tentar o reset
+      const { data: profileExists } = await supabase
+        .from('t_profiles')
+        .select('ds_email')
+        .eq('ds_email', email)
+        .maybeSingle();
+
+      if (!profileExists) {
+        return toast.error('Este e-mail não está cadastrado no sistema.', { id: toastId });
+      }
+
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      toast.success('E-mail enviado! Verifique sua caixa de entrada.', { id: toastId });
+    } catch (err: any) {
+      toast.error('Erro: ' + err.message, { id: toastId });
+    }
+  };
+
   return (
     <div className="login-container">
       <div className="login-header-section">
@@ -107,7 +135,13 @@ const Login: React.FC = () => {
               <button type="submit" className="login-button-pill" disabled={loading}>
                 {loading ? <div className="login-spinner"></div> : 'ENTRAR'}
               </button>
-              <a href="#" className="forgot-password-link">Esqueci minha senha</a>
+               <a 
+                href="#" 
+                className="forgot-password-link" 
+                onClick={(e) => { e.preventDefault(); handleForgotPassword(); }}
+              >
+                Esqueci minha senha
+              </a>
             </div>
           </form>
         </div>

@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Toaster } from 'react-hot-toast';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import ResetPassword from './pages/ResetPassword';
 
 // Componente para proteger rotas
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -22,6 +23,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route 
             path="/" 
             element={
