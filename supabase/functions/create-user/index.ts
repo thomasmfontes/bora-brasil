@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    const { nm_profile, email, password, ds_role } = await req.json();
+    const { nm_profile, email, password, ds_role, nu_phone } = await req.json();
 
     const { data: authData, error: signUpErr } = await adminClient.auth.admin.createUser({
       email,
@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
     if (authData.user) {
       await adminClient
         .from('t_profiles')
-        .update({ ds_role, nm_profile, ds_email: email })
+        .update({ ds_role, nm_profile, ds_email: email, nu_phone })
         .eq('id_auth_user', authData.user.id);
     }
 

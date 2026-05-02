@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
-import { sendBookingConfirmationEmail, sendBookingCancellationEmail } from '../lib/mailgun';
-import { FiCheckCircle, FiTrash2, FiX, FiEdit, FiPlus, FiMinus, FiClock, FiChevronDown, FiLogOut } from 'react-icons/fi';
+import { 
+  sendBookingConfirmationEmail, 
+  sendBookingCancellationEmail 
+} from '../lib/mailgun';
+import { 
+  sendBookingConfirmationWhatsApp, 
+  sendBookingCancellationWhatsApp 
+} from '../lib/whatsapp';
+import { FiCheckCircle, FiTrash2, FiX, FiEdit, FiPlus, FiMinus, FiClock, FiChevronDown, FiLogOut, FiPhone } from 'react-icons/fi';
 import { MdOutlineMeetingRoom } from "react-icons/md";
 import { RxCalendar } from "react-icons/rx";
 import { TfiEmail } from "react-icons/tfi";
@@ -128,7 +135,7 @@ const Dashboard: React.FC = () => {
     { id_participant: '', client: '', name: '', email: '', phone: '' }
   ]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [newUserForm, setNewUserForm] = useState({ nm_profile: '', email: '', password: '', ds_role: 'USER' });
+  const [newUserForm, setNewUserForm] = useState({ nm_profile: '', email: '', password: '', ds_role: 'USER', nu_phone: '' });
   const [isCreatingUser, setIsCreatingUser] = useState(false);
   const [selectedUserAccess, setSelectedUserAccess] = useState<string[]>([]);
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
@@ -328,6 +335,32 @@ const Dashboard: React.FC = () => {
           participants: validParts.map(p => ({ name: p.nm_participant, email: p.ds_email || '' })),
         }).catch(err => console.error('[mailgun] Erro ao enviar e-mail de confirmação:', err));
 
+        // Dispara WhatsApp para o criador (se tiver telefone)
+        if (profile.nu_phone) {
+          sendBookingConfirmationWhatsApp({
+            toName: profile.nm_profile || 'Responsável',
+            phone: profile.nu_phone,
+            roomName: selectedRoom.nm_room,
+            date: currentRoomDate,
+            time: selectedSlot,
+            creatorName: profile.nm_profile || 'Responsável'
+          }).catch(err => console.error('[whatsapp] Erro ao enviar WhatsApp para criador:', err));
+        }
+
+        // Dispara WhatsApp para participantes (se tiverem telefone)
+        validParts.forEach(p => {
+          if (p.nu_phone) {
+            sendBookingConfirmationWhatsApp({
+              toName: p.nm_participant,
+              phone: p.nu_phone,
+              roomName: selectedRoom.nm_room,
+              date: currentRoomDate,
+              time: selectedSlot,
+              creatorName: profile.nm_profile || 'Responsável'
+            }).catch(err => console.error('[whatsapp] Erro ao enviar WhatsApp para participante:', err));
+          }
+        });
+
         toast.success('Agendamento realizado!');
       }
 
@@ -434,6 +467,39 @@ const Dashboard: React.FC = () => {
           time: bookingRef.hr_time_slot,
           participants: bookingParticipants,
         }).catch(err => console.error('[mailgun] Erro ao enviar e-mail de cancelamento:', err));
+
+        // Dispara WhatsApp de cancelamento para o criador
+        if (creatorRef.nu_phone) {
+          sendBookingCancellationWhatsApp({
+            toName: creatorRef.nm_profile || 'Responsável',
+            phone: creatorRef.nu_phone,
+            roomName: roomRef.nm_room,
+            date: bookingRef.dt_booking,
+            time: bookingRef.hr_time_slot,
+            canceledBy: profile.nm_profile || 'Administrador'
+          }).catch(err => console.error('[whatsapp] Erro ao enviar WhatsApp de cancelamento para criador:', err));
+        }
+
+        // Dispara WhatsApp de cancelamento para participantes
+        // Nota: Precisamos coletar os telefones dos participantes antes de deletar
+        // (Isso será tratado buscando os participantes com nu_phone incluído)
+        const { data: partsWithPhone } = await supabase
+          .from('t_booking_participants')
+          .select('nm_participant, nu_phone')
+          .eq('id_booking', bookingRef.id_booking);
+        
+        partsWithPhone?.forEach(p => {
+          if (p.nu_phone) {
+            sendBookingCancellationWhatsApp({
+              toName: p.nm_participant,
+              phone: p.nu_phone,
+              roomName: roomRef.nm_room,
+              date: bookingRef.dt_booking,
+              time: bookingRef.hr_time_slot,
+              canceledBy: profile.nm_profile || 'Administrador'
+            }).catch(err => console.error('[whatsapp] Erro ao enviar WhatsApp de cancelamento para participante:', err));
+          }
+        });
       }
 
       toast.success('Reserva excluída com sucesso.');
@@ -461,7 +527,7 @@ const Dashboard: React.FC = () => {
       
       toast.success('Usuário criado com sucesso!');
       setIsNewUserModalOpen(false);
-      setNewUserForm({ nm_profile: '', email: '', password: '', ds_role: 'USER' });
+      setNewUserForm({ nm_profile: '', email: '', password: '', ds_role: 'USER', nu_phone: '' });
       await fetchInitialData();
     } catch (e: any) {
       toast.error('Erro ao criar usuário: ' + e.message);
@@ -1078,6 +1144,21 @@ const Dashboard: React.FC = () => {
                   ))}
                </div>
 
+               <div className="admin-input-group" style={{ marginBottom: '1.5rem' }}>
+                  <label className="admin-label"><FiPhone style={{marginRight: '8px'}} /> Telefone (WhatsApp)</label>
+                  <PhoneInput 
+                    className="admin-input"
+                    placeholder="(ddd) 99999-9999" 
+                    value={selectedProfileForEdit.nu_phone || ''} 
+                    onChange={async (val: string) => {
+                      const updated = { ...selectedProfileForEdit, nu_phone: val };
+                      setSelectedProfileForEdit(updated);
+                      // Atualiza no banco imediatamente ao mudar (estratégia simples para esse dashboard)
+                      await supabase.from('t_profiles').update({ nu_phone: val }).eq('id_profile', selectedProfileForEdit.id_profile);
+                    }} 
+                  />
+               </div>
+
                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
                   <button className="btn-confirm" style={{width: '100%'}} onClick={() => { setIsAdminModalOpen(false); setSelectedUserAccess([]); }}>
                     CONCLUIR
@@ -1127,6 +1208,16 @@ const Dashboard: React.FC = () => {
                 />
               </div>
 
+               <div className="admin-input-group">
+                <label className="admin-label"><FiPhone style={{marginRight: '8px'}} /> Telefone (WhatsApp)</label>
+                <PhoneInput 
+                  className="admin-input"
+                  placeholder="(ddd) 99999-9999" 
+                  value={newUserForm.nu_phone}
+                  onChange={(val: string) => setNewUserForm({ ...newUserForm, nu_phone: val })}
+                />
+              </div>
+
               <div className="admin-input-group">
                 <label className="admin-label">Grupo</label>
                 <CustomSelect 
@@ -1142,7 +1233,7 @@ const Dashboard: React.FC = () => {
                 <button className="btn-confirm" onClick={handleCreateUser} disabled={isCreatingUser}>
                   {isCreatingUser ? <><div className="spinner"></div> CRIANDO...</> : 'CRIAR USUÁRIO'}
                 </button>
-                <button className="btn-cancel" onClick={() => { setIsNewUserModalOpen(false); setNewUserForm({ nm_profile: '', email: '', password: '', ds_role: 'USER' }); }}>CANCELAR</button>
+                <button className="btn-cancel" onClick={() => { setIsNewUserModalOpen(false); setNewUserForm({ nm_profile: '', email: '', password: '', ds_role: 'USER', nu_phone: '' }); }}>CANCELAR</button>
               </div>
             </div>
           </div>
