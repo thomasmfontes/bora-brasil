@@ -441,19 +441,24 @@ const Dashboard: React.FC = () => {
         ? (allProfiles.find(p => p.id_profile === bookingRef.id_profile) || profile)
         : null;
 
-      let bookingParticipants: { name: string; email: string }[] = [];
+      let bookingParticipants: { name: string; email: string; phone: string }[] = [];
       if (bookingRef) {
         const { data: parts } = await supabase
           .from('t_booking_participants')
-          .select('nm_participant, ds_email')
+          .select('nm_participant, ds_email, nu_phone')
           .eq('id_booking', bookingRef.id_booking);
         if (parts) {
           bookingParticipants = parts
             .filter((p: any) => p.nm_participant?.trim())
-            .map((p: any) => ({ name: p.nm_participant, email: p.ds_email || '' }));
+            .map((p: any) => ({ 
+              name: p.nm_participant, 
+              email: p.ds_email || '', 
+              phone: p.nu_phone || '' 
+            }));
         }
       }
 
+      // Agora sim, deletamos
       const { error } = await supabase.from('t_bookings').delete().eq('id_booking', bookingToDelete);
       if (error) throw error;
 
@@ -481,18 +486,11 @@ const Dashboard: React.FC = () => {
         }
 
         // Dispara WhatsApp de cancelamento para participantes
-        // Nota: Precisamos coletar os telefones dos participantes antes de deletar
-        // (Isso será tratado buscando os participantes com nu_phone incluído)
-        const { data: partsWithPhone } = await supabase
-          .from('t_booking_participants')
-          .select('nm_participant, nu_phone')
-          .eq('id_booking', bookingRef.id_booking);
-        
-        partsWithPhone?.forEach(p => {
-          if (p.nu_phone) {
+        bookingParticipants.forEach(p => {
+          if (p.phone) {
             sendBookingCancellationWhatsApp({
-              toName: p.nm_participant,
-              phone: p.nu_phone,
+              toName: p.name,
+              phone: p.phone,
               roomName: roomRef.nm_room,
               date: bookingRef.dt_booking,
               time: bookingRef.hr_time_slot,
