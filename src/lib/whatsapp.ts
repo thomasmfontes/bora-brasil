@@ -2,7 +2,7 @@
  * Utilitário para envio de notificações via WhatsApp (Evolution API)
  */
 
-const EVOLUTION_API_URL = 'https://thorough-guitars-futures-athletes.trycloudflare.com';
+const EVOLUTION_API_URL = 'https://wrote-mighty-configured-fotos.trycloudflare.com';
 
 /**
  * Normaliza o número de telefone para o formato E.164 (apenas números)
@@ -75,7 +75,7 @@ const MONTH_NAMES = [
   'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
 ];
 
-const EVENT_LOCATION = 'Estande Bora Brasil | Skala Brasil e Lola From Rio\nAv. 1201, Pavilhão Verde, Expo Center Norte - São Paulo';
+const EVENT_LOCATION = 'Estande Bora Brasil no Pavilhão Verde, Rua M19/20.';
 
 /** Formata 'YYYY-MM-DD' → '18 de maio de 2026' */
 function formatDateLong(date: string): string {
@@ -110,15 +110,15 @@ export const sendBookingConfirmationWhatsApp = async (params: {
   const message = [
     `Olá ${params.toName},`,
     ``,
-    `Você recebeu um convite de *${params.creatorName}* para uma reunião no estande da Bora Brasil | Skala Brasil e Lola From Rio:`,
+    `Você recebeu um convite de *${params.creatorName}* para participar de uma reunião no estande da Bora Brasil | Skala Brasil e Lola From Rio na APAS.`,
     ``,
     `*Data*: ${formattedDate}`,
     `*Hora*: ${timeRange}`,
     `*Local*: ${EVENT_LOCATION}`,
     ``,
-    `Aguardamos sua presença`,
+    `Aguardamos sua presença!`,
     ``,
-    params.creatorPhone ? `Caso necessário, fale diretamente com o organizador no whatsapp: ${params.creatorPhone}` : `Esta é uma mensagem automática.`
+    params.creatorPhone ? `Caso necessário, fale diretamente com o organizador no whatsapp ${params.creatorPhone}` : `Esta é uma mensagem automática.`
   ].join('\n');
   
   return sendWhatsAppMessage({ phone: params.phone, message });
@@ -148,7 +148,7 @@ export const sendBookingCancellationWhatsApp = async (params: {
     `*Hora*: ${timeRange}`,
     `*Solicitante*: ${params.canceledBy}`,
     ``,
-    `Bora Brasil – APAS 2026`
+    `Bora Brasil | Skala Brasil e Lola From Rio - APAS 2026`
   ].join('\n');
   
   return sendWhatsAppMessage({ phone: params.phone, message });
