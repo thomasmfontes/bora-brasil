@@ -232,13 +232,13 @@ export async function sendBookingConfirmationEmail(params: BookingEmailParams): 
       const text = [
         `Olá ${name},`,
         ``,
-        `Você recebeu um convite de ${creatorName} para uma reunião no estande da Bora Brasil | Skala Brasil e Lola From Rio:`,
+        `Você recebeu um convite de ${creatorName} para participar de uma reunião no estande da Bora Brasil | Skala Brasil e Lola From Rio na APAS.`,
         ``,
         `Data: ${formattedDate}`,
         `Hora: ${timeRange}`,
         `Local: ${EVENT_LOCATION}`,
         ``,
-        `Aguardamos sua presença`,
+        `Aguardamos sua presença!`,
       ].join('\n');
 
       const icsContent = generateICS({
@@ -286,7 +286,7 @@ export async function sendBookingCancellationEmail(params: BookingEmailParams): 
         `Hora: ${timeRange}`,
         `Solicitante: ${creatorName}`,
         ``,
-        `Bora Brasil – APAS 2026`,
+        `Bora Brasil | Skala Brasil e Lola From Rio - APAS 2026`,
       ].join('\n');
 
       const icsContent = generateICS({
