@@ -1948,16 +1948,18 @@ img {
 }
 
 /* Fix dropdown overlapping */
-.admin-input-group.staggered-field {
-  position: relative;
-  z-index: 1;
-}
-
-.admin-input-group.staggered-field:focus-within {
-  z-index: 10 !important;
-}
-
 .custom-select-container.open {
+  z-index: 1000 !important;
+}
+
+/* Garante que o container do input que tem um select aberto fique por cima dos outros */
+.admin-input-group:focus-within,
+.admin-input-group:hover {
+  z-index: 100 !important;
+}
+
+/* Se o navegador suportar :has, esta é a solução definitiva */
+.admin-input-group:has(.custom-select-container.open) {
   z-index: 1000 !important;
 }
 

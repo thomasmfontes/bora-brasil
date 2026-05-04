@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    const { nm_profile, email, password, ds_role, nu_phone } = await req.json();
+    const { nm_profile, email, password, ds_role, nu_phone, room_access } = await req.json();
 
     const { data: authData, error: signUpErr } = await adminClient.auth.admin.createUser({
       email,
@@ -51,10 +51,33 @@ Deno.serve(async (req) => {
     if (signUpErr) throw signUpErr;
 
     if (authData.user) {
-      await adminClient
+      const { data: profileData, error: profileErr } = await adminClient
         .from('t_profiles')
-        .update({ ds_role, nm_profile, ds_email: email, nu_phone })
-        .eq('id_auth_user', authData.user.id);
+        .upsert({ 
+          id_auth_user: authData.user.id,
+          ds_role, 
+          nm_profile, 
+          ds_email: email, 
+          nu_phone 
+        }, { onConflict: 'id_auth_user' })
+        .select('id_profile')
+        .single();
+      
+      if (profileErr) throw profileErr;
+
+      // Se houver acessos selecionados, insere-os
+      if (room_access && Array.isArray(room_access) && room_access.length > 0) {
+        const accessRecords = room_access.map(id_room => ({
+          id_profile: profileData.id_profile,
+          id_room
+        }));
+        
+        const { error: accessErr } = await adminClient
+          .from('t_user_room_access')
+          .insert(accessRecords);
+          
+        if (accessErr) throw accessErr;
+      }
     }
 
     return new Response(JSON.stringify({ success: true }), {

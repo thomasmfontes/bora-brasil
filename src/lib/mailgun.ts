@@ -67,10 +67,10 @@ const MONTH_NAMES = [
   'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
 ];
 
-const EVENT_LOCATION = 'Estande Bora Brasil | Skala Brasil e Lola From Rio\nAv. 1201, Pavilhão Verde, Expo Center Norte - São Paulo';
+const EVENT_LOCATION = 'Estande Bora Brasil no Pavilhão Verde, Rua M19/20.';
 
 // Localização no formato ICS (vírgulas escapadas com \)
-const ICS_LOCATION = 'Estande Bora Brasil | Skala Brasil e Lola From Rio\\, Av. 1201\\, Pavilhão Verde\\, Expo Center Norte - São Paulo';
+const ICS_LOCATION = 'Estande Bora Brasil no Pavilhão Verde, Rua M19/20.';
 
 interface BookingEmailParams {
   creatorName: string;

@@ -151,6 +151,7 @@ const Dashboard: React.FC = () => {
   const [editUserForm, setEditUserForm] = useState({ nm_profile: '', email: '', password: '', ds_role: 'USER', nu_phone: '' });
   const [isUpdatingUser, setIsUpdatingUser] = useState(false);
   const [selectedUserAccess, setSelectedUserAccess] = useState<string[]>([]);
+  const [newUserRoomAccess, setNewUserRoomAccess] = useState<string[]>([]);
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
   const [bookingToEdit, setBookingToEdit] = useState<any>(null);
@@ -533,7 +534,7 @@ const Dashboard: React.FC = () => {
     setIsCreatingUser(true);
     try {
       const { data, error } = await supabase.functions.invoke('create-user', {
-        body: newUserForm,
+        body: { ...newUserForm, room_access: newUserRoomAccess },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
@@ -541,6 +542,7 @@ const Dashboard: React.FC = () => {
       toast.success('Usuário criado com sucesso!');
       setIsNewUserModalOpen(false);
       setNewUserForm({ nm_profile: '', email: '', password: '', ds_role: 'USER', nu_phone: '' });
+      setNewUserRoomAccess([]);
       await fetchInitialData();
     } catch (e: any) {
       toast.error('Erro ao criar usuário: ' + e.message);
@@ -628,6 +630,7 @@ const Dashboard: React.FC = () => {
 
   const handleOpenNewUser = () => {
     setNewUserForm({ nm_profile: '', email: '', password: '', ds_role: 'USER', nu_phone: '' });
+    setNewUserRoomAccess([]);
     setIsNewUserModalOpen(true);
   };
 
@@ -1368,9 +1371,36 @@ const Dashboard: React.FC = () => {
                     { value: 'ADMIN', label: 'Administrador' }
                   ]}
                   value={newUserForm.ds_role}
-                  onChange={(val: string) => setNewUserForm({ ...newUserForm, ds_role: val })}
+                  onChange={(val: string) => {
+                    setNewUserForm({ ...newUserForm, ds_role: val });
+                    if (val === 'ADMIN') setNewUserRoomAccess([]);
+                  }}
                 />
               </div>
+
+              {newUserForm.ds_role === 'USER' && (
+                <div className="admin-input-group staggered-field" style={{"--field-index": 5} as any}>
+                  <label className="admin-label">Acessos Liberados</label>
+                  <div className="permission-list" style={{ marginTop: '10px' }}>
+                    {rooms.map((r, idx) => (
+                      <label key={r.id_room} className="permission-item staggered-field" style={{"--field-index": 6 + idx} as any}>
+                        <input 
+                          type="checkbox" 
+                          checked={newUserRoomAccess.includes(r.id_room)} 
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setNewUserRoomAccess(prev => [...prev, r.id_room]);
+                            } else {
+                              setNewUserRoomAccess(prev => prev.filter(id => id !== r.id_room));
+                            }
+                          }} 
+                        />
+                        <span className="permission-label">{r.nm_room}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
               <div className="modal-buttons" style={{marginTop: '1.5rem'}}>
                 <button className="btn-confirm" style={{flex: 1}} onClick={handleCreateUser} disabled={isCreatingUser}>
                   {isCreatingUser ? <><div className="spinner"></div> CRIANDO...</> : 'CRIAR'}
