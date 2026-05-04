@@ -1920,6 +1920,11 @@ img {
   transform: translateX(100%);
 }
 
+.tab-indicator.single-tab {
+  width: 100% !important;
+  transform: translateX(0) !important;
+}
+
 .modal-tab.active {
   background: transparent !important;
   color: var(--primary-green) !important;

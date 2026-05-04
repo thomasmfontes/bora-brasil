@@ -1175,13 +1175,15 @@ const Dashboard: React.FC = () => {
               >
                 <FiEdit /> DADOS
               </button>
-              <button 
-                className={`modal-tab ${activeAdminTab === 'permissoes' ? 'active' : ''}`} 
-                onClick={() => setActiveAdminTab('permissoes')}
-              >
-                <MdOutlineMeetingRoom /> PERMISSÕES
-              </button>
-              <div className={`tab-indicator ${activeAdminTab}`} />
+              {editUserForm.ds_role === 'USER' && (
+                <button 
+                  className={`modal-tab ${activeAdminTab === 'permissoes' ? 'active' : ''}`} 
+                  onClick={() => setActiveAdminTab('permissoes')}
+                >
+                  <MdOutlineMeetingRoom /> PERMISSÕES
+                </button>
+              )}
+              <div className={`tab-indicator ${activeAdminTab} ${editUserForm.ds_role !== 'USER' ? 'single-tab' : ''}`} />
             </div>
              
             <div className="modal-body" style={{ padding: '2rem' }}>
@@ -1228,7 +1230,10 @@ const Dashboard: React.FC = () => {
                             { value: 'ADMIN', label: 'Administrador' }
                           ]}
                           value={editUserForm.ds_role}
-                          onChange={(val: string) => setEditUserForm({ ...editUserForm, ds_role: val })}
+                          onChange={(val: string) => {
+                            setEditUserForm({ ...editUserForm, ds_role: val });
+                            if (val === 'ADMIN') setActiveAdminTab('dados');
+                          }}
                         />
                       </div>
 
