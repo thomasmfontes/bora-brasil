@@ -679,7 +679,7 @@ const Dashboard: React.FC = () => {
             return (
               <div key={room.id_room} className={`room-card ${theme}`} style={{opacity: access ? 1 : 0.7}}>
                 <div className={`room-header ${theme}`}>
-                  <span className="header-dot">●</span> {room.nm_room}
+                  <span className="header-dot">●</span> Sala {room.nm_room}
                 </div>
                 <img className="room-image" src={imageUrl} alt={room.nm_room} />
                 
@@ -907,7 +907,7 @@ const Dashboard: React.FC = () => {
 
             <div className="modal-inner-container">
               <div className={`unified-header ${selectedRoom.nm_room.toLowerCase().includes('skala') ? 'skala' : selectedRoom.nm_room.toLowerCase().includes('bora') ? 'bora' : 'lola'}`}>
-                <span className="header-dot">●</span> {selectedRoom.nm_room}
+                <span className="header-dot">●</span> Sala {selectedRoom.nm_room}
               </div>
               
               <img 
@@ -1014,7 +1014,7 @@ const Dashboard: React.FC = () => {
 
             <div className="modal-inner-container">
               <div className={`unified-header ${selectedRoom.nm_room.toLowerCase().includes('skala') ? 'skala' : selectedRoom.nm_room.toLowerCase().includes('bora') ? 'bora' : 'lola'}`}>
-                <span className="header-dot">●</span> {selectedRoom.nm_room}
+                <span className="header-dot">●</span> Sala {selectedRoom.nm_room}
               </div>
               
               <img 
@@ -1276,7 +1276,7 @@ const Dashboard: React.FC = () => {
                                     setSelectedUserAccess(prev => prev.filter(id => id !== r.id_room));
                                     toast.error('Erro ao adicionar permissão');
                                   } else {
-                                    toast.success(`Acesso à ${r.nm_room} liberado`);
+                                    toast.success(`Acesso à Sala ${r.nm_room} liberado`);
                                   }
                                 } else {
                                   setSelectedUserAccess(prev => prev.filter(id => id !== r.id_room));
@@ -1288,13 +1288,13 @@ const Dashboard: React.FC = () => {
                                     setSelectedUserAccess(prev => [...prev, r.id_room]);
                                     toast.error('Erro ao remover permissão');
                                   } else {
-                                    toast.success(`Acesso à ${r.nm_room} removido`);
+                                    toast.success(`Acesso à Sala ${r.nm_room} removido`);
                                   }
                                 }
                                 await fetchInitialData();
                               }} 
                             />
-                            <span className="permission-label">{r.nm_room}</span>
+                            <span className="permission-label">Sala {r.nm_room}</span>
                           </label>
                         ))}
                      </div>
@@ -1400,7 +1400,7 @@ const Dashboard: React.FC = () => {
                             }
                           }} 
                         />
-                        <span className="permission-label">{r.nm_room}</span>
+                        <span className="permission-label">Sala {r.nm_room}</span>
                       </label>
                     ))}
                   </div>
