@@ -558,17 +558,19 @@ const Dashboard: React.FC = () => {
     }
     setIsUpdatingUser(true);
     try {
-      const { data, error } = await supabase.rpc('update_user_admin', {
-        p_id_profile: selectedProfileForEdit.id_profile,
-        p_nm_profile: editUserForm.nm_profile,
-        p_email: editUserForm.email,
-        p_password: editUserForm.password || null,
-        p_ds_role: editUserForm.ds_role,
-        p_nu_phone: editUserForm.nu_phone
+      // Chamando a Edge Function para atualizar dados sensíveis (email/senha) e perfil
+      const { data, error } = await supabase.functions.invoke('update-user', {
+        body: {
+          id_profile: selectedProfileForEdit.id_profile,
+          nm_profile: editUserForm.nm_profile,
+          email: editUserForm.email,
+          password: editUserForm.password,
+          ds_role: editUserForm.ds_role,
+          nu_phone: editUserForm.nu_phone
+        }
       });
       
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      if (error || data?.error) throw new Error(error?.message || data?.error);
       
       toast.success('Usuário atualizado com sucesso!');
       setIsAdminModalOpen(false);
