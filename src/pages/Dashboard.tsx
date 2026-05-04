@@ -1158,7 +1158,7 @@ const Dashboard: React.FC = () => {
 
       {isAdminModalOpen && selectedProfileForEdit && (
         <div className="modal-overlay modal-permissions">
-          <div className="modal-content" style={{ maxWidth: '460px', padding: 0, overflow: 'hidden' }}>
+          <div className="modal-content modal-scrollable" style={{ maxWidth: '460px', padding: 0 }}>
             <div className="unified-header bora modal-admin-header">
               <span className="header-dot">●</span> 
               <div className="header-title-container">
@@ -1249,13 +1249,13 @@ const Dashboard: React.FC = () => {
 
                       <button 
                         className="btn-confirm" 
-                        style={{width: '100%', marginTop: '1rem'}} 
+                        style={{width: '100%', marginTop: '1.5rem'}} 
                         onClick={handleUpdateUser}
                         disabled={isUpdatingUser}
                       >
                         {isUpdatingUser ? <><div className="spinner"></div> SALVANDO...</> : 'SALVAR DADOS'}
                       </button>
-                   </div>
+                    </div>
                  ) : (
                    <>
                      <div className="permission-list">
@@ -1299,22 +1299,22 @@ const Dashboard: React.FC = () => {
                         ))}
                      </div>
 
-                     <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
-                        <button className="btn-confirm" style={{width: '100%'}} onClick={() => { setIsAdminModalOpen(false); setSelectedUserAccess([]); }}>
-                          CONCLUIR
-                        </button>
+                     <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem', paddingBottom: '0' }}>
+                       <button className="btn-confirm" style={{width: '100%'}} onClick={() => { setIsAdminModalOpen(false); setSelectedUserAccess([]); }}>
+                         CONCLUIR
+                       </button>
                      </div>
                    </>
                  )}
                </div>
              </div>
-          </div>
+           </div>
         </div>
       )}
 
       {isNewUserModalOpen && (
         <div className="modal-overlay modal-permissions modal-new-user">
-          <div className="modal-content" style={{ maxWidth: '460px', padding: 0, overflow: 'hidden' }}>
+          <div className="modal-content modal-scrollable" style={{ maxWidth: '460px', padding: 0 }}>
             <div className="unified-header bora modal-admin-header">
               <span className="header-dot">●</span> 
               <div className="header-title-container">
