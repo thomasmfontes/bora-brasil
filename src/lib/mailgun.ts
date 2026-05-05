@@ -280,12 +280,12 @@ export async function sendBookingCancellationEmail(params: BookingEmailParams): 
       const text = [
         `Olá ${name},`,
         ``,
-        `Informamos que a reserva abaixo foi *CANCELADA*:`,
+        `Informamos que a reserva abaixo foi CANCELADA:`,
         ``,
-        `*Data*: ${formattedDate}`,
-        `*Horário*: ${timeRange}`,
-        `*Sala*: ${roomName}`,
-        `*Solicitante*: ${creatorName}`,
+        `Data: ${formattedDate}`,
+        `Horário: ${timeRange}`,
+        `Sala: ${roomName}`,
+        `Solicitante: ${creatorName}`,
         ``,
         `Bora Brasil | Skala Brasil e Lola From Rio - APAS 2026`,
       ].join('\n');

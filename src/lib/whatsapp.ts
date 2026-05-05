@@ -2,7 +2,7 @@
  * Utilitário para envio de notificações via WhatsApp (Evolution API)
  */
 
-const EVOLUTION_API_URL = 'https://bookmark-dem-being-infrastructure.trycloudflare.com';
+const EVOLUTION_API_URL = 'https://plenty-erik-adventures-expensive.trycloudflare.com';
 
 /**
  * Normaliza o número de telefone para o formato E.164 (apenas números)
