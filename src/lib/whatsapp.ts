@@ -2,7 +2,7 @@
  * Utilitário para envio de notificações via WhatsApp (Evolution API)
  */
 
-const EVOLUTION_API_URL = 'https://suburban-teaching-express-encyclopedia.trycloudflare.com';
+const EVOLUTION_API_URL = 'https://bookmark-dem-being-infrastructure.trycloudflare.com';
 
 /**
  * Normaliza o número de telefone para o formato E.164 (apenas números)
@@ -110,15 +110,16 @@ export const sendBookingConfirmationWhatsApp = async (params: {
   const message = [
     `Olá ${params.toName},`,
     ``,
-    `Você recebeu um convite de *${params.creatorName}* para participar de uma reunião no estande da Bora Brasil | Skala Brasil e Lola From Rio na APAS.`,
+    `Você recebeu um convite de ${params.creatorName} para participar de uma reunião no estande da Bora Brasil | Skala Brasil e Lola From Rio na APAS.`,
     ``,
-    `*Data*: ${formattedDate}`,
-    `*Hora*: ${timeRange}`,
-    `*Local*: ${EVENT_LOCATION}`,
+    `Data: ${formattedDate}`,
+    `Horário: ${timeRange}`,
+    `Sala: ${params.roomName}`,
+    `Local: ${EVENT_LOCATION}`,
     ``,
     `Aguardamos sua presença!`,
     ``,
-    params.creatorPhone ? `Caso necessário, fale diretamente com o organizador no whatsapp ${params.creatorPhone}` : `Esta é uma mensagem automática.`
+    params.creatorPhone ? `Caso necessário, fale diretamente com o organizador no WhatsApp ${params.creatorPhone}` : `Esta é uma mensagem automática.`
   ].join('\n');
   
   return sendWhatsAppMessage({ phone: params.phone, message });
@@ -143,9 +144,9 @@ export const sendBookingCancellationWhatsApp = async (params: {
     ``,
     `Informamos que a reserva abaixo foi *CANCELADA*:`,
     ``,
-    `*Sala*: ${params.roomName}`,
     `*Data*: ${formattedDate}`,
-    `*Hora*: ${timeRange}`,
+    `*Horário*: ${timeRange}`,
+    `*Sala*: ${params.roomName}`,
     `*Solicitante*: ${params.canceledBy}`,
     ``,
     `Bora Brasil | Skala Brasil e Lola From Rio - APAS 2026`
