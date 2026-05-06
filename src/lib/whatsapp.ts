@@ -32,6 +32,16 @@ interface SendMessageParams {
 export const sendWhatsAppMessage = async ({ phone, message }: SendMessageParams) => {
   const cleanPhone = normalizePhoneNumber(phone);
   
+  // Validação de segurança: No Brasil, WhatsApp deve ser celular (11 dígitos, começando com DDD + 9)
+  // Isso evita que o robô tente enviar para números fixos ou inválidos que travam a interface
+  if (cleanPhone.startsWith('55')) {
+    const withoutCC = cleanPhone.slice(2);
+    if (withoutCC.length !== 11 || withoutCC[2] !== '9') {
+      console.warn('[WhatsApp] Número brasileiro ignorado por não ser celular válido (DDD + 9 + 8 dígitos):', phone);
+      return;
+    }
+  }
+  
   if (!cleanPhone || cleanPhone.length < 10) {
     console.warn('[WhatsApp] Número inválido ignorado:', phone);
     return;
