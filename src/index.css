@@ -2213,3 +2213,29 @@ img {
   flex-shrink: 0;
 }
 
+/* Botão Exportar Excel */
+.btn-export-excel {
+  display: inline-flex;
+  align-items: center;
+  background: var(--primary-green);
+  color: var(--white);
+  border: none;
+  border-radius: 10px;
+  padding: 1rem;
+  cursor: pointer;
+}
+
+.btn-export-excel svg {
+  font-size: 1.1rem;
+}
+
+.section-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.section-title-row .section-title {
+  margin-bottom: 0;
+}

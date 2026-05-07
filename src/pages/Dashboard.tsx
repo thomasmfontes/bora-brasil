@@ -22,6 +22,8 @@ import { ConfirmModal } from '../components/ConfirmModal';
 
 
 // --- COMPONENTES AUXILIARES (FORA DO RENDER PARA MANTER O FOCO) ---
+import * as XLSX from 'xlsx';
+import { FaFileExcel } from 'react-icons/fa';
 
 const formatPhone = (value: string) => {
   const numbers = value.replace(/\D/g, '');
@@ -656,6 +658,73 @@ const Dashboard: React.FC = () => {
     setIsNewUserModalOpen(true);
   };
 
+  const exportToExcel = () => {
+    // Determine which bookings to export based on role
+    const visibleBookings = bookings.filter(b => profile?.ds_role === 'ADMIN' || b.id_profile === profile?.id_profile);
+    
+    // Flatten data for Excel
+    const dataToExport: any[] = [];
+
+    visibleBookings.forEach(b => {
+      const room = rooms.find(r => r.id_room === b.id_room)?.nm_room || 'Desconhecida';
+      const creator = allProfiles.find(p => p.id_profile === b.id_profile)?.nm_profile || 'Responsável';
+      const parts = bookingParticipantsMap[b.id_booking] || [];
+      
+      const formattedDate = b.dt_booking ? `${b.dt_booking.split('-')[2]}/${b.dt_booking.split('-')[1]}` : '';
+
+      if (parts.length === 0) {
+        // If no participants, still export the booking
+        dataToExport.push({
+          'Data': formattedDate,
+          'Horário': b.hr_time_slot,
+          'Sala': room,
+          'Responsável': creator,
+          'Status': 'Agendado',
+          'Empresa (Cliente)': '',
+          'Nome Participante': '',
+          'E-mail Participante': '',
+          'Telefone Participante': ''
+        });
+      } else {
+        parts.forEach(p => {
+          if (p.nm_participant?.trim()) {
+            dataToExport.push({
+              'Data': formattedDate,
+              'Horário': b.hr_time_slot,
+              'Sala': room,
+              'Responsável': creator,
+              'Status': 'Agendado',
+              'Empresa (Cliente)': p.nm_client || '',
+              'Nome Participante': p.nm_participant || '',
+              'E-mail Participante': p.ds_email || '',
+              'Telefone Participante': p.nu_phone || ''
+            });
+          }
+        });
+      }
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Agendamentos");
+    
+    const columnWidths = [
+      { wch: 10 }, // Data
+      { wch: 10 }, // Horário
+      { wch: 15 }, // Sala
+      { wch: 25 }, // Responsável
+      { wch: 15 }, // Status
+      { wch: 30 }, // Empresa
+      { wch: 30 }, // Participante
+      { wch: 30 }, // E-mail
+      { wch: 20 }, // Telefone
+    ];
+    worksheet['!cols'] = columnWidths;
+
+    XLSX.writeFile(workbook, "Relatorio_Agendamentos_BoraBrasil.xlsx");
+    toast.success('Download do Excel iniciado!');
+  };
+
   return (
     <>
       <header className="main-header">
@@ -812,7 +881,16 @@ const Dashboard: React.FC = () => {
 
 
       <section className="section-card">
-        <h2 className="section-title">Agendamentos</h2>
+        <div className="section-title-row">
+          <h2 className="section-title">Agendamentos</h2>
+          <button 
+            className="btn-export-excel" 
+            onClick={exportToExcel}
+            title="Exportar para Excel"
+          >
+            <FaFileExcel />
+          </button>
+        </div>
         <div className="data-table-wrapper">
           <table className="data-table">
             <thead><tr><th>Horário</th><th>Sala</th><th>Nome</th><th>Clientes</th><th>Status</th><th>Ações</th></tr></thead>
