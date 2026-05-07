@@ -842,7 +842,6 @@ const Dashboard: React.FC = () => {
                         title="Ver clientes deste agendamento"
                       >
                         <span className="booking-clients-badge">{clientCount}</span>
-                        {clientCount === 1 ? 'cliente' : 'clientes'}
                       </button>
                     </td>
                     <td className="status-agendado">Agendado</td>

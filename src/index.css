@@ -2083,8 +2083,8 @@ img {
   background: #eaf2e8;
   color: var(--primary-green);
   border: 1.5px solid #c5dbbf;
-  border-radius: 50px;
-  padding: 0.3rem 0.85rem 0.3rem 0.4rem;
+  border-radius: 10px;
+  padding: 0.3rem;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 0.8rem;
