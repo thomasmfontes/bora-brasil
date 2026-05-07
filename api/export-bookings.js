@@ -56,14 +56,22 @@ export default async function handler(req, res) {
     }
 
     const headers = Object.keys(rows[0]);
+    // Adicionamos 'sep=;' para o Excel abrir as colunas automaticamente
     const csvContent = [
+      'sep=;',
       headers.join(';'),
-      ...rows.map(row => headers.map(h => `"${row[h] || ''}"`).join(';'))
+      ...rows.map(row => headers.map(h => {
+        let val = row[h] || '-';
+        // Troca traço longo por hífen comum para evitar erro de encoding
+        if (typeof val === 'string') val = val.replace(/—/g, '-');
+        return `"${val}"`;
+      }).join(';'))
     ].join('\n');
 
-    // Retorna como CSV com BOM para o Excel
+    // Configura os headers para o Excel reconhecer como download de arquivo UTF-8
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-    res.setHeader('Content-Disposition', 'attachment; filename=agendamentos.csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=agendamentos_apas.csv');
+    // Enviamos o BOM (\ufeff) + o conteúdo
     res.status(200).send('\ufeff' + csvContent);
 
   } catch (error) {
