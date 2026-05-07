@@ -656,6 +656,35 @@ const Dashboard: React.FC = () => {
     setIsNewUserModalOpen(true);
   };
 
+  const handleDownloadLiveExcel = () => {
+    // No site oficial, este link funcionará perfeitamente.
+    // Localmente (localhost), o Excel pode mostrar o código da API porque o servidor dev não executa funções.
+    const queryUrl = `${window.location.origin}/api/export-bookings`;
+    
+    // Conteúdo do arquivo .iqy (Internet Query)
+    // Adicionamos as configurações de cabeçalho para o Excel aceitar a conexão
+    const iqyContent = `WEB
+1
+${queryUrl}
+
+Selection=All
+Formatting=None
+PreFormattedTextToColumns=True
+ConsecutiveDelimitersAsOne=True
+SingleBlockTextImport=False
+DisableDateRecognition=False
+VisualMode=1
+`;
+
+    const blob = new Blob([iqyContent], { type: 'text/x-ms-iqy' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'Agendamentos_BoraBrasil_Sincronizado.iqy';
+    link.click();
+    
+    toast.success('Arquivo de sincronização gerado!');
+  };
+
   return (
     <>
       <header className="main-header">
@@ -812,7 +841,19 @@ const Dashboard: React.FC = () => {
 
 
       <section className="section-card">
-        <h2 className="section-title">Agendamentos</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <h2 className="section-title" style={{ marginBottom: 0 }}>Agendamentos</h2>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button 
+              className="btn-confirm" 
+              style={{ padding: '0.5rem 1rem', fontSize: '0.85rem', background: '#217346', borderColor: '#217346' }}
+              onClick={handleDownloadLiveExcel}
+              title="Baixa um arquivo que sincroniza com o banco de dados via F5"
+            >
+              Excel Vivo (F5)
+            </button>
+          </div>
+        </div>
         <div className="data-table-wrapper">
           <table className="data-table">
             <thead><tr><th>Horário</th><th>Sala</th><th>Nome</th><th>Clientes</th><th>Status</th><th>Ações</th></tr></thead>
