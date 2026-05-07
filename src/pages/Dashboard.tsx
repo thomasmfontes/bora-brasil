@@ -126,6 +126,8 @@ const Dashboard: React.FC = () => {
   const [allProfiles, setAllProfiles] = useState<any[]>([]);
   const [userAccess, setUserAccess] = useState<string[]>([]);
   const [roomDates, setRoomDates] = useState<{[key: string]: string}>({});
+  const [bookingParticipantsMap, setBookingParticipantsMap] = useState<{[bookingId: string]: any[]}>({});
+  const [selectedBookingForClients, setSelectedBookingForClients] = useState<any | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isNewUserModalOpen, setIsNewUserModalOpen] = useState(false);
@@ -168,7 +170,7 @@ const Dashboard: React.FC = () => {
   ];
 
   useEffect(() => {
-    if (isModalOpen || isEditModalOpen || isAdminModalOpen || isNewUserModalOpen || isConfirmModalOpen || isBookingConfirmOpen || isLogoutConfirmOpen) {
+    if (isModalOpen || isEditModalOpen || isAdminModalOpen || isNewUserModalOpen || isConfirmModalOpen || isBookingConfirmOpen || isLogoutConfirmOpen || !!selectedBookingForClients) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -176,7 +178,7 @@ const Dashboard: React.FC = () => {
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [isModalOpen, isEditModalOpen, isAdminModalOpen, isNewUserModalOpen, isConfirmModalOpen, isBookingConfirmOpen, isLogoutConfirmOpen]);
+  }, [isModalOpen, isEditModalOpen, isAdminModalOpen, isNewUserModalOpen, isConfirmModalOpen, isBookingConfirmOpen, isLogoutConfirmOpen, selectedBookingForClients]);
 
   useEffect(() => {
     const totalPages = Math.ceil(allProfiles.length / usersPerPage);
@@ -204,7 +206,25 @@ const Dashboard: React.FC = () => {
         });
         setRooms(sorted);
       }
-      if (bookingsRes.data) setBookings(bookingsRes.data);
+      if (bookingsRes.data) {
+        setBookings(bookingsRes.data);
+        // Buscar participantes de todos os agendamentos
+        if (bookingsRes.data.length > 0) {
+          const bookingIds = bookingsRes.data.map((b: any) => b.id_booking);
+          const { data: allParts } = await supabase
+            .from('t_booking_participants')
+            .select('*')
+            .in('id_booking', bookingIds);
+          if (allParts) {
+            const map: {[bookingId: string]: any[]} = {};
+            allParts.forEach((p: any) => {
+              if (!map[p.id_booking]) map[p.id_booking] = [];
+              if (p.nm_participant?.trim()) map[p.id_booking].push(p);
+            });
+            setBookingParticipantsMap(map);
+          }
+        }
+      }
       if (profile) {
         const { data: acc } = await supabase.from('t_user_room_access').select('id_room').eq('id_profile', profile.id_profile);
         if (acc) setUserAccess(acc.map(a => a.id_room));
@@ -795,38 +815,50 @@ const Dashboard: React.FC = () => {
         <h2 className="section-title">Agendamentos</h2>
         <div className="data-table-wrapper">
           <table className="data-table">
-            <thead><tr><th>Horário</th><th>Sala</th><th>Nome</th><th>Status</th><th>Ações</th></tr></thead>
+            <thead><tr><th>Horário</th><th>Sala</th><th>Nome</th><th>Clientes</th><th>Status</th><th>Ações</th></tr></thead>
 
 
             <tbody>
               {bookings
                 .filter(b => profile?.ds_role === 'ADMIN' || b.id_profile === profile?.id_profile)
-                .map(b => (
-                <tr key={b.id_booking}>
-                  <td>
-                    <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--primary-green)' }}>{b.hr_time_slot}</div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                      {b.dt_booking ? `${b.dt_booking.split('-')[2]}/${b.dt_booking.split('-')[1]}` : ''}
-                    </div>
-                  </td>
+                .map(b => {
+                  const parts = bookingParticipantsMap[b.id_booking] || [];
+                  const clientCount = parts.filter(p => p.nm_participant?.trim()).length;
+                  return (
+                  <tr key={b.id_booking}>
+                    <td>
+                      <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--primary-green)' }}>{b.hr_time_slot}</div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                        {b.dt_booking ? `${b.dt_booking.split('-')[2]}/${b.dt_booking.split('-')[1]}` : ''}
+                      </div>
+                    </td>
 
-                  <td>{rooms.find(r => r.id_room === b.id_room)?.nm_room}</td>
-                  <td>{allProfiles.find(p => p.id_profile === b.id_profile)?.nm_profile || 'Participante'}</td>
-                  <td className="status-agendado">Agendado</td>
-                  <td>
+                    <td>{rooms.find(r => r.id_room === b.id_room)?.nm_room}</td>
+                    <td>{allProfiles.find(p => p.id_profile === b.id_profile)?.nm_profile || 'Participante'}</td>
+                    <td>
+                      <button
+                        className={`btn-booking-clients ${clientCount === 0 ? 'empty' : ''}`}
+                        onClick={() => setSelectedBookingForClients(b)}
+                        title="Ver clientes deste agendamento"
+                      >
+                        <span className="booking-clients-badge">{clientCount}</span>
+                        {clientCount === 1 ? 'cliente' : 'clientes'}
+                      </button>
+                    </td>
+                    <td className="status-agendado">Agendado</td>
+                    <td>
 
-                    <div className="action-icons">
-                      {(profile?.ds_role === 'ADMIN' || b.id_profile === profile?.id_profile) && (
-                        <>
-                          <FiEdit className="icon-edit" onClick={() => openEditModal(b)} />
-                          <div className="icon-delete" onClick={() => handleDelete(b.id_booking)}><FiX /></div>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-
-              ))}
+                      <div className="action-icons">
+                        {(profile?.ds_role === 'ADMIN' || b.id_profile === profile?.id_profile) && (
+                          <>
+                            <FiEdit className="icon-edit" onClick={() => openEditModal(b)} />
+                            <div className="icon-delete" onClick={() => handleDelete(b.id_booking)}><FiX /></div>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                )})}
             </tbody>
           </table>
         </div>
@@ -1418,6 +1450,53 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       )}
+      {selectedBookingForClients && (() => {
+        const b = selectedBookingForClients;
+        const parts = bookingParticipantsMap[b.id_booking] || [];
+        const clients = [...new Set(parts.map((p: any) => p.nm_client).filter(Boolean))] as string[];
+        const participantCount = parts.filter((p: any) => p.nm_participant?.trim()).length;
+        const roomName = rooms.find(r => r.id_room === b.id_room)?.nm_room || '—';
+        const responsavel = allProfiles.find((p: any) => p.id_profile === b.id_profile)?.nm_profile || 'Responsável';
+        return (
+          <div className="modal-overlay modal-permissions" onClick={() => setSelectedBookingForClients(null)}>
+            <div className="modal-content modal-scrollable" style={{ maxWidth: '500px', padding: 0 }} onClick={e => e.stopPropagation()}>
+              <div className="unified-header bora modal-admin-header">
+                <span className="header-dot">●</span>
+                <div className="header-title-container">
+                  <span className="header-label">{roomName} — {b.dt_booking?.split('-')[2]}/{b.dt_booking?.split('-')[1]} às {b.hr_time_slot}</span>
+                  <span className="header-user-name">{participantCount} {participantCount === 1 ? 'cliente' : 'clientes'}</span>
+                </div>
+                <button className="modal-close-x" onClick={() => setSelectedBookingForClients(null)}><FiX /></button>
+              </div>
+              <div className="modal-body" style={{ padding: '1.25rem', maxHeight: '65vh', overflowY: 'auto' }}>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Solicitante: <strong style={{ color: 'var(--text-gray)' }}>{responsavel}</strong></p>
+                {clients.length === 0 ? (
+                  <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem 0' }}>Nenhum participante cadastrado para este agendamento.</p>
+                ) : (
+                  <div className="clients-modal-list">
+                    {parts.filter((p: any) => p.nm_participant?.trim()).map((p: any, idx: number) => (
+                      <div key={idx} className="client-modal-item">
+                        <div className="client-modal-name">{p.nm_client || '—'}</div>
+                        <div className="client-modal-meetings">
+                          <div className="client-modal-meeting-row">
+                            <div>
+                              <div className="client-meeting-person">{p.nm_participant}</div>
+                              {p.ds_email && <div className="client-meeting-room">{p.ds_email}</div>}
+                            </div>
+                            {p.nu_phone && <span className="client-meeting-badge">{p.nu_phone}</span>}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+
       <ConfirmModal 
         isOpen={isConfirmModalOpen}
         onClose={() => { setIsConfirmModalOpen(false); setUserToDelete(null); }}
