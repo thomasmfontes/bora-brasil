@@ -303,6 +303,31 @@ const Dashboard: React.FC = () => {
           }));
         if (newParts.length > 0) {
           await supabase.from('t_booking_participants').insert(newParts);
+
+          // Dispara e-mail apenas para os NOVOS participantes adicionados na edição
+          sendBookingConfirmationEmail({
+            creatorName: profile.nm_profile || 'Responsável',
+            creatorEmail: '', // Vazio para não enviar repetido para o criador
+            roomName: selectedRoom.nm_room,
+            date: currentRoomDate,
+            time: selectedSlot,
+            participants: newParts.map(p => ({ name: p.nm_participant, email: p.ds_email || '' })),
+          }).catch(err => console.error('[mailgun] Erro ao enviar e-mail para novos participantes:', err));
+
+          // Dispara WhatsApp apenas para os NOVOS participantes
+          newParts.forEach(p => {
+            if (p.nu_phone) {
+              sendBookingConfirmationWhatsApp({
+                toName: p.nm_participant,
+                phone: p.nu_phone,
+                roomName: selectedRoom.nm_room,
+                date: currentRoomDate,
+                time: selectedSlot,
+                creatorName: profile.nm_profile || 'Responsável',
+                creatorPhone: profile.nu_phone
+              }).catch(err => console.error('[whatsapp] Erro ao enviar WhatsApp para novo participante:', err));
+            }
+          });
         }
 
         // 2. Atualizar os participantes existentes (evita duplicar)
