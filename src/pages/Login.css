@@ -1,5 +1,8 @@
 .login-container {
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   background-color: var(--white);
@@ -10,7 +13,8 @@
 .login-header-section {
   position: relative;
   width: 100%;
-  max-height: 52vh;
+  flex: 1 1 65%;
+  min-height: 0;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -21,20 +25,21 @@
 .login-hero-img {
   width: 100%;
   height: 100%;
-  max-height: 52vh;
   object-fit: cover;
+  object-position: center top;
   display: block;
 }
 
 /* Form Section */
 .login-form-section {
-  flex: 1;
+  flex: 0 0 auto;
+  min-height: 35%;
   background-color: var(--white);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2.5rem 1.5rem 1.5rem;
+  padding: 1.2rem 1.5rem 1.2rem;
   position: relative;
 }
 
@@ -58,7 +63,7 @@
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 0.9rem;
 }
 
 .input-group {
@@ -66,7 +71,7 @@
   align-items: center;
   background-color: #ededed;
   border-radius: 8px;
-  padding: 0.5rem 1rem;
+  padding: 0.45rem 1rem;
   transition: all 0.3s ease;
   border: 1.5px solid transparent;
 }
@@ -84,7 +89,7 @@
 
 .input-icon-wrapper {
   color: #e53935;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   margin-right: 0.8rem;
   display: flex;
   align-items: center;
@@ -94,8 +99,8 @@
   border: none;
   background: transparent;
   width: 100%;
-  padding: 0.5rem 0;
-  font-size: 1rem;
+  padding: 0.4rem 0;
+  font-size: 0.95rem;
   color: var(--text-gray);
 }
 
@@ -107,15 +112,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.8rem;
-  margin-top: 0.8rem;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
 }
 
 .login-button-pill {
   background-color: #e53935;
   color: var(--white);
   border: none;
-  padding: 0.5rem 2rem;
+  padding: 0.4rem 2rem;
   border-radius: 50px;
   font-weight: 900;
   font-size: 0.85rem;
@@ -123,7 +128,7 @@
   cursor: pointer;
   transition: all 0.2s;
   min-width: 120px;
-  height: 38px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -142,8 +147,8 @@
 
 /* Spinner */
 .login-spinner {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   border-top-color: #fff;
@@ -168,14 +173,14 @@
 }
 
 .login-footer-logo {
-  margin-top: 2rem;
+  margin-top: 1rem;
   display: flex;
   justify-content: center;
   width: 100%;
 }
 
 .login-footer-logo img {
-  max-height: 48px;
+  max-height: 42px;
   width: auto;
   object-fit: contain;
 }
@@ -183,10 +188,11 @@
 @media (min-width: 768px) {
   .login-footer-logo {
     position: absolute;
-    bottom: 2rem;
-    right: 3rem;
+    bottom: 1.5rem;
+    right: 2.5rem;
     width: auto;
     margin-top: 0;
   }
 }
+
 
