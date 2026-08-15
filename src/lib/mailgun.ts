@@ -60,17 +60,17 @@ export async function sendEmail(payload: SendEmailPayload): Promise<SendEmailRes
 // Helpers de e-mail — Agendamento de Sala
 // ──────────────────────────────────────────────────────────────────────────────
 
-const FROM_ADDRESS = 'Bora Brasil APAS 2026 <carteiro@borabrasileventos.com.br>';
+const FROM_ADDRESS = 'Skala Brasil Beauty Fair 2026 <carteiro@borabrasileventos.com.br>';
 
 const MONTH_NAMES = [
   'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
   'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
 ];
 
-const EVENT_LOCATION = 'Estande Bora Brasil no Pavilhão Verde, Rua M19/20.';
+const EVENT_LOCATION = 'Estande Skala Brasil na Beauty Fair International.';
 
 // Localização no formato ICS (vírgulas escapadas com \)
-const ICS_LOCATION = 'Estande Bora Brasil no Pavilhão Verde, Rua M19/20.';
+const ICS_LOCATION = 'Estande Skala Brasil na Beauty Fair International.';
 
 interface BookingEmailParams {
   creatorName: string;
@@ -83,7 +83,7 @@ interface BookingEmailParams {
   participants: { name: string; email: string }[];
 }
 
-/** Formata 'YYYY-MM-DD' → '18 de maio de 2026' */
+/** Formata 'YYYY-MM-DD' → '04 de setembro de 2026' */
 function formatDateLong(date: string): string {
   const [y, m, d] = date.split('-');
   return `${parseInt(d)} de ${MONTH_NAMES[parseInt(m) - 1]} de ${y}`;
@@ -146,7 +146,8 @@ function formatICSDate(dt: Date): string {
     `${pad(dt.getUTCDate())}` +
     `T${pad(dt.getUTCHours())}` +
     `${pad(dt.getUTCMinutes())}` +
-    `${pad(dt.getUTCSeconds())}Z`
+    `${pad(dt.getUTCSeconds())}` +
+    `Z`
   );
 }
 
@@ -182,7 +183,7 @@ function generateICS(params: {
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Bora Brasil//APAS 2026//PT',
+    'PRODID:-//Skala Brasil//Beauty Fair 2026//PT',
     'CALSCALE:GREGORIAN',
     `METHOD:${method}`,
     'BEGIN:VEVENT',
@@ -190,12 +191,12 @@ function generateICS(params: {
     `DTSTAMP:${formatICSDate(now)}`,
     `DTSTART:${formatICSDate(startUTC)}`,
     `DTEND:${formatICSDate(endUTC)}`,
-    `SUMMARY:${isCancel ? '[CANCELADO] ' : ''}Reunião – ${roomName} | APAS 2026`,
+    `SUMMARY:${isCancel ? '[CANCELADO] ' : ''}Reunião – ${roomName} | Beauty Fair 2026`,
     `DESCRIPTION:${isCancel
       ? `Reunião cancelada. Agendada originalmente por ${creatorName}.`
-      : `Reunião agendada por ${creatorName} via portal Bora Brasil APAS 2026.`}`,
+      : `Reunião agendada por ${creatorName} via portal Skala Brasil Beauty Fair 2026.`}`,
     `LOCATION:${ICS_LOCATION}`,
-    `ORGANIZER;CN=Bora Brasil APAS 2026:mailto:${FROM_ADDRESS.match(/<(.+)>/)![1]}`,
+    `ORGANIZER;CN=Skala Brasil Beauty Fair 2026:mailto:${FROM_ADDRESS.match(/<(.+)>/)![1]}`,
     `ATTENDEE;CN=${attendeeName};RSVP=${isCancel ? 'FALSE' : 'TRUE'};PARTSTAT=${isCancel ? 'DECLINED' : 'NEEDS-ACTION'}:mailto:${attendeeEmail}`,
     `STATUS:${isCancel ? 'CANCELLED' : 'CONFIRMED'}`,
     `SEQUENCE:${isCancel ? 1 : 0}`,
@@ -232,7 +233,7 @@ export async function sendBookingConfirmationEmail(params: BookingEmailParams): 
       const text = [
         `Olá ${name},`,
         ``,
-        `Você recebeu um convite de ${creatorName} para participar de uma reunião no estande da Bora Brasil | Skala Brasil e Lola From Rio na APAS.`,
+        `Você recebeu um convite de ${creatorName} para participar de uma reunião no estande da Skala Brasil na Beauty Fair 2026.`,
         ``,
         `Data: ${formattedDate}`,
         `Horário: ${timeRange}`,
@@ -254,7 +255,7 @@ export async function sendBookingConfirmationEmail(params: BookingEmailParams): 
       return sendEmail({
         from: FROM_ADDRESS,
         to: email,
-        subject: '✅ Confirmação de Reserva',
+        subject: '✅ Confirmação de Reserva - Beauty Fair',
         text,
         ics_base64: toBase64(icsContent),
       });
@@ -287,7 +288,7 @@ export async function sendBookingCancellationEmail(params: BookingEmailParams): 
         `Sala: ${roomName}`,
         `Solicitante: ${creatorName}`,
         ``,
-        `Bora Brasil | Skala Brasil e Lola From Rio - APAS 2026`,
+        `Skala Brasil - Beauty Fair 2026`,
       ].join('\n');
 
       const icsContent = generateICS({
@@ -303,7 +304,7 @@ export async function sendBookingCancellationEmail(params: BookingEmailParams): 
       return sendEmail({
         from: FROM_ADDRESS,
         to: email,
-        subject: '❌ Cancelamento de Reserva',
+        subject: '❌ Cancelamento de Reserva - Beauty Fair',
         text,
         ics_base64: toBase64(icsContent),
       });

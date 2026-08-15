@@ -53,10 +53,11 @@
 }
 
 body {
-  background-image: url('/background.jpeg');
+  background-image: url('/beautyfair/bg-waves.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  background-attachment: fixed;
 
   font-family: var(--font-text);
   color: var(--text-gray);
@@ -84,87 +85,64 @@ img {
   display: flex;
   flex-direction: column;
   color: white;
-  background-image: linear-gradient(rgba(31, 77, 41, 0.4), rgba(31, 77, 41, 0.4)), url('/header-bg.jpeg');
-  background-size: cover;
-  background-position: center;
-}
-
-.orange-bar {
-  height: 12px;
-  background-color: var(--accent-orange);
-  width: 100%;
+  background: #111111;
+  border-bottom: 3px solid #7bb319;
 }
 
 .header-content-wrapper {
   max-width: 1220px;
   width: 100%;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 1.2rem 1.5rem;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: space-between;
 }
 
 .header-logos-row {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 3rem;
+  justify-content: space-between;
+  width: 100%;
+  gap: 1.5rem;
 }
 
 .header-left-logo {
   display: flex;
-  flex-direction: column;
   align-items: center;
 }
 
 .header-right-logos {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  gap: 1rem;
 }
 
 .logo-main {
-  max-height: 150px;
+  max-height: 55px;
   width: auto;
+  object-fit: contain;
 }
 
 .logo-secondary {
-  max-height: 150px;
+  max-height: 50px;
   width: auto;
-}
-
-.header-divider {
-  width: 2px;
-  height: 120px;
-  background: var(--accent-orange);
-}
-
-.event-tag-header {
-  color: var(--accent-orange);
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-size: 1.6rem;
-  letter-spacing: 1px;
-  margin-top: 1rem;
-  text-transform: uppercase;
+  object-fit: contain;
 }
 
 /* Card Principal */
 .main-portal-card {
-  background: var(--bg-cream);
-  /* Cor creme/palha do mockup */
+  background: var(--white);
   border-radius: var(--radius-lg);
   padding: 2rem 1rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  margin-top: -1px;
-  /* Para colar na barra laranja */
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  margin-top: 1.5rem;
   margin-bottom: 2rem;
 }
 
 @media (min-width: 768px) {
   .main-portal-card {
-    padding: 3rem 2rem;
+    padding: 2.5rem 2rem;
     border-radius: var(--radius-xl);
   }
 }
@@ -179,9 +157,9 @@ img {
   align-items: center;
   justify-content: center;
   gap: 0.8rem;
-  color: var(--primary-green);
+  color: #e53935;
   font-size: clamp(1.3rem, 6vw, 2.2rem);
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
   font-family: var(--font-display);
   font-weight: 900;
   line-height: 1.1;
@@ -193,20 +171,25 @@ img {
 .portal-title-block h2 svg {
   flex-shrink: 0;
   font-size: 1.2em;
-  margin-top: -2px; /* Alinhamento óptico */
+  color: #e53935;
 }
 
-
 .portal-welcome {
-  color: var(--status-available-text);
-  font-size: clamp(0.9rem, 3vw, 1.1rem);
-  max-width: 800px;
+  color: #555;
+  font-size: clamp(0.9rem, 3vw, 1.05rem);
+  max-width: 850px;
   margin: 0 auto;
   line-height: 1.5;
 }
 
+.portal-welcome strong {
+  color: #e53935;
+  font-size: 1.15em;
+  display: block;
+  margin-bottom: 0.4rem;
+}
 
-/* Room Cards Grid - Estilo Premium */
+/* Room Cards Grid - 2x2 */
 .rooms-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -219,92 +202,92 @@ img {
   }
 }
 
-@media (min-width: 1100px) {
-  .rooms-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+/* Temas das 4 Salas Beauty Fair */
+.room-card.hidratacao {
+  --room-color: #f59e0b;
 }
 
-/* Temas de Salas */
-.room-card.bora {
-  --room-color: var(--primary-green);
-  --dot-color: var(--status-available-bg);
+.room-card.brilho {
+  --room-color: #f472b6;
 }
 
-.room-card.skala {
-  --room-color: var(--bg);
-  --dot-color: var(--primary-green);
+.room-card.reparacao {
+  --room-color: #be123c;
 }
 
-.room-card.lola {
-  --room-color: var(--black);
-  --dot-color: var(--white);
+.room-card.forca {
+  --room-color: #06b6d4;
 }
 
-.room-header.bora {
-  background: var(--primary-green);
+.room-header.hidratacao, .unified-header.hidratacao {
+  background: #f59e0b;
   color: white;
 }
 
-.room-header.skala {
-  background: var(--light-green);
-  color: var(--primary-green);
-}
-
-.room-header.lola {
-  background: var(--black);
-  color: var(--white);
-}
-
-.header-dot {
-  color: var(--dot-color);
-  font-size: 1.6rem;
-}
-
-.room-card.bora .date-tab.active {
-  background: var(--primary-green);
+.room-header.brilho, .unified-header.brilho {
+  background: #f9a8d4;
   color: white;
 }
 
-.room-card.skala .date-tab.active {
-  background: var(--status-available-bg);
-  color: var(--text-gray);
+.room-header.reparacao, .unified-header.reparacao {
+  background: #be185d;
+  color: white;
 }
 
-.room-card.lola .date-tab.active {
-  background: var(--black);
-  color: var(--white);
+.room-header.forca, .unified-header.forca {
+  background: #06b6d4;
+  color: white;
+}
+
+.room-card.hidratacao .date-tab.active {
+  background: #f59e0b;
+  color: white;
+}
+
+.room-card.brilho .date-tab.active {
+  background: #f9a8d4;
+  color: white;
+}
+
+.room-card.reparacao .date-tab.active {
+  background: #be185d;
+  color: white;
+}
+
+.room-card.forca .date-tab.active {
+  background: #06b6d4;
+  color: white;
 }
 
 .room-card {
   background: white;
   border-radius: var(--radius-lg);
-  box-shadow: 4px -2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   border: 1px solid #e0e0e0;
   transition: transform 0.3s;
 }
 
 .room-header {
-  padding: 1.5rem 1.2rem;
+  padding: 1.2rem 1.2rem;
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 0.8rem;
+  letter-spacing: 0.5px;
 }
 
 .room-image {
   width: 100%;
-  height: 238px;
+  height: 200px;
   object-fit: cover;
 }
 
-
 .room-spreadsheet-container {
-  margin: 1.2rem;
+  margin: 1rem;
   border: 1px solid #E0E0E0;
   border-radius: 10px;
   overflow: hidden;
@@ -314,7 +297,7 @@ img {
 
 .date-tabs {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   background: var(--bg-table-header);
   border-bottom: 1px solid var(--border-light);
 }

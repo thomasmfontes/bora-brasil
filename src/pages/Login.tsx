@@ -84,22 +84,7 @@ const Login: React.FC = () => {
   return (
     <div className="login-container">
       <div className="login-header-section">
-        <div className="orange-bar top"></div>
-        
-        <div className="login-header-content">
-          <div className="login-header-left">
-            <img src="/bora-brasil-branco.png" alt="Bora Brasil" className="login-logo-main" />
-            <p className="login-event-tag">APAS 2026!</p>
-          </div>
-          
-          <div className="login-header-divider"></div>
-          
-          <div className="login-header-right">
-            <img src="/skala-lola.png" alt="Skala & Lola" className="login-logo-secondary" />
-          </div>
-        </div>
-        
-        <div className="orange-bar bottom"></div>
+        <img src="/beautyfair/login-hero.png" alt="Skala Brasil - Beleza Brasileira para todos" className="login-hero-img" />
       </div>
 
       <div className="login-form-section">
@@ -135,7 +120,7 @@ const Login: React.FC = () => {
               <button type="submit" className="login-button-pill" disabled={loading}>
                 {loading ? <div className="login-spinner"></div> : 'ENTRAR'}
               </button>
-               <a 
+              <a 
                 href="#" 
                 className="forgot-password-link" 
                 onClick={(e) => { e.preventDefault(); handleForgotPassword(); }}
@@ -144,6 +129,10 @@ const Login: React.FC = () => {
               </a>
             </div>
           </form>
+        </div>
+
+        <div className="login-footer-logo">
+          <img src="/beautyfair/beautyfair-logo.png" alt="Beauty Fair International" />
         </div>
       </div>
     </div>

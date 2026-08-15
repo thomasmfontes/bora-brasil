@@ -85,9 +85,9 @@ const MONTH_NAMES = [
   'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
 ];
 
-const EVENT_LOCATION = 'Estande Bora Brasil no Pavilhão Verde, Rua M19/20.';
+const EVENT_LOCATION = 'Estande Skala Brasil na Beauty Fair International.';
 
-/** Formata 'YYYY-MM-DD' → '18 de maio de 2026' */
+/** Formata 'YYYY-MM-DD' → '04 de setembro de 2026' */
 function formatDateLong(date: string): string {
   const [y, m, d] = date.split('-');
   return `${parseInt(d)} de ${MONTH_NAMES[parseInt(m) - 1]} de ${y}`;
@@ -120,7 +120,7 @@ export const sendBookingConfirmationWhatsApp = async (params: {
   const message = [
     `Olá ${params.toName},`,
     ``,
-    `Você recebeu um convite de *${params.creatorName}* para participar de uma reunião no estande da Bora Brasil | Skala Brasil e Lola From Rio na APAS.`,
+    `Você recebeu um convite de *${params.creatorName}* para participar de uma reunião no estande da Skala Brasil na Beauty Fair 2026.`,
     ``,
     `*Data*: ${formattedDate}`,
     `*Horário*: ${timeRange}`,
@@ -159,8 +159,9 @@ export const sendBookingCancellationWhatsApp = async (params: {
     `*Sala*: ${params.roomName}`,
     `*Solicitante*: ${params.canceledBy}`,
     ``,
-    `Bora Brasil | Skala Brasil e Lola From Rio - APAS 2026`
+    `Skala Brasil - Beauty Fair 2026`
   ].join('\n');
   
   return sendWhatsAppMessage({ phone: params.phone, message });
 };
+

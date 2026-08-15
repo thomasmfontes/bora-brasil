@@ -166,10 +166,30 @@ const Dashboard: React.FC = () => {
   const [currentPageUsers, setCurrentPageUsers] = useState(1);
   const usersPerPage = 5;
 
-  const eventDates = ['2026-05-18', '2026-05-19', '2026-05-20', '2026-05-21'];
-  const timeSlots = [
-    '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'
-  ];
+  const eventDates = ['2026-09-04', '2026-09-05', '2026-09-06', '2026-09-07', '2026-09-08'];
+
+  const getTimeSlotsForDate = (date: string) => {
+    if (date?.endsWith('09-04')) {
+      return ['13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
+    }
+    if (date?.endsWith('09-05')) {
+      return ['12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
+    }
+    return ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+  };
+
+  const getRoomTheme = (roomName: string) => {
+    const n = (roomName || '').toLowerCase();
+    if (n.includes('hidrata')) return 'hidratacao';
+    if (n.includes('brilho')) return 'brilho';
+    if (n.includes('repara')) return 'reparacao';
+    if (n.includes('força') || n.includes('forca')) return 'forca';
+    return 'hidratacao';
+  };
+
+  const getRoomImage = (_roomName: string) => {
+    return '/beautyfair/sala-default.png';
+  };
 
   useEffect(() => {
     if (isModalOpen || isEditModalOpen || isAdminModalOpen || isNewUserModalOpen || isConfirmModalOpen || isBookingConfirmOpen || isLogoutConfirmOpen || !!selectedBookingForClients) {
@@ -200,11 +220,11 @@ const Dashboard: React.FC = () => {
         supabase.from('t_bookings').select('*').in('dt_booking', eventDates)
       ]);
       if (roomsRes.data) {
-        const customOrder = ['bora', 'skala', 'lola'];
+        const customOrder = ['hidrata', 'brilho', 'repara', 'força', 'forca'];
         const sorted = [...roomsRes.data].sort((a, b) => {
           const idxA = customOrder.findIndex(o => a.nm_room.toLowerCase().includes(o));
           const idxB = customOrder.findIndex(o => b.nm_room.toLowerCase().includes(o));
-          return idxA - idxB;
+          return (idxA >= 0 ? idxA : 99) - (idxB >= 0 ? idxB : 99);
         });
         setRooms(sorted);
       }
@@ -746,26 +766,24 @@ const Dashboard: React.FC = () => {
     ];
     worksheet['!cols'] = columnWidths;
 
-    XLSX.writeFile(workbook, "Relatorio_Agendamentos_BoraBrasil.xlsx");
+    XLSX.writeFile(workbook, "Relatorio_Agendamentos_BeautyFair_Skala.xlsx");
     toast.success('Download do Excel iniciado!');
   };
 
   return (
     <>
       <header className="main-header">
-        <div className="orange-bar"></div>
-        
         <div className="header-content-wrapper">
           <div className="header-logos-row">
             <div className="header-left-logo">
-              <img src="/bora-brasil-branco.png" alt="Bora Brasil" className="logo-main" />
-              <div className="event-tag-header">APAS 2026!</div>
+              <img src="/beautyfair/beautyfair-logo.png" alt="Beauty Fair International" className="logo-main" />
             </div>
             
-            <div className="header-divider"></div>
-            
             <div className="header-right-logos">
-              <img src="/skala-lola.png" alt="Skala & Lola" className="logo-secondary" />
+              <div style={{ textAlign: 'right', color: '#fff' }}>
+                <span style={{ fontSize: '1.5rem', fontWeight: 900, fontFamily: 'var(--font-display)', letterSpacing: '1px' }}>SKALA</span>
+                <span style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, opacity: 0.85, marginTop: '-3px' }}>BRASIL</span>
+              </div>
             </div>
           </div>
         </div>
@@ -774,35 +792,32 @@ const Dashboard: React.FC = () => {
       <div className="dashboard-container">
         <main className="main-portal-card">
           <div className="portal-title-block">
-            <h2><RxCalendar /> Portal de Agendamentos de Salas</h2>
+            <h2><RxCalendar /> Portal de Agendamento de Salas</h2>
             <p className="portal-welcome">
-              <strong>Bem-vindo ao portal de agendamento de salas de reunião – APAS</strong><br/>
-              Este é o canal oficial para reserva das salas de reunião do Grupo Bora Brasil, Skala Brasil<br/> e Lola From Rio durante a APAS.<br/> Aqui você pode consultar a disponibilidade e garantir seu horário de forma rápida e prática.
+              <strong>Bem-vindo ao portal de agendamento de salas de reunião – Beauty Fair</strong>
+              Este é o canal oficial para reserva das salas de reunião da Skala Brasil durante a Beauty Fair.<br/>
+              Aqui você pode consultar a disponibilidade e garantir seu horário de forma rápida e prática.
             </p>
           </div>
 
         <div className="rooms-grid">
           {rooms.map((room) => {
             const access = hasAccess(room.id_room);
-            const name = room.nm_room.toLowerCase();
-            const theme = name.includes('bora') ? 'bora' : name.includes('skala') ? 'skala' : name.includes('lola') ? 'lola' : 'bora';
-            const imageUrl = name.includes('bora') 
-              ? "/sala-1.jpg.jpeg"
-              : name.includes('skala')
-                ? "/sala-2.jpg.jpeg"
-                : "/sala-3.jpg.jpeg";
+            const theme = getRoomTheme(room.nm_room);
+            const imageUrl = getRoomImage(room.nm_room);
+            const currentRoomDate = roomDates[room.id_room] || eventDates[0];
+            const currentSlots = getTimeSlotsForDate(currentRoomDate);
             
             return (
               <div key={room.id_room} className={`room-card ${theme}`} style={{opacity: access ? 1 : 0.7}}>
                 <div className={`room-header ${theme}`}>
-                  <span className="header-dot">●</span> Sala {room.nm_room}
+                  Sala {room.nm_room}
                 </div>
                 <img className="room-image" src={imageUrl} alt={room.nm_room} />
                 
                 <div className="room-spreadsheet-container">
                   <div className="date-tabs">
                     {eventDates.map(d => {
-                      const currentRoomDate = roomDates[room.id_room] || eventDates[0];
                       return (
                         <button 
                           key={d} 
@@ -815,15 +830,8 @@ const Dashboard: React.FC = () => {
                     })}
                   </div>
 
-                  <div className="slots-container" key={roomDates[room.id_room] || eventDates[0]}>
-                    {timeSlots.filter(t => {
-                      const currentRoomDate = roomDates[room.id_room] || eventDates[0];
-                      if (currentRoomDate === '2026-05-21') {
-                        return parseInt(t.split(':')[0]) <= 17;
-                      }
-                      return true;
-                    }).map((t, index) => {
-                      const currentRoomDate = roomDates[room.id_room] || eventDates[0];
+                  <div className="slots-container" key={currentRoomDate}>
+                    {currentSlots.map((t, index) => {
                       const status = getSlotStatus(room.id_room, t, currentRoomDate);
                       return (
                         <div key={t} className="slot-row" style={{ "--slot-index": index } as any}>
@@ -845,11 +853,9 @@ const Dashboard: React.FC = () => {
                                 ]);
                                 setIsModalOpen(true);
 
-
                               } else if (status === 'mine') {
                                 const b = bookings.find(x => x.id_room === room.id_room && x.hr_time_slot === t && x.dt_booking === currentRoomDate);
                                 if (b) openEditModal(b);
-
                               }
                             }}
                           >
@@ -881,24 +887,19 @@ const Dashboard: React.FC = () => {
               <TfiEmail className="icon-mail" />
               <p>
                 Confirme sua reserva em poucos cliques.<br/>
-                Em caso de dúvidas ou necessidade de suporte, procure nossa equipe<br/> no local. Agradecemos sua organização e desejamos ótimos encontros!
+                Em caso de dúvidas ou necessidade de suporte, procure nossa equipe no local. Agradecemos sua organização e desejamos ótimos encontros!
               </p>
             </div>
 
             <div className="instruction-item">
               <TfiEmail className="icon-mail" />
-              <p>Após agendar, tanto o solicitante quanto o convidado receberão um<br/> e-mail de confirmação.</p>
+              <p>Após agendar, tanto o solicitante quanto o convidado receberão um e-mail de confirmação.</p>
             </div>
           </div>
 
           <div className="footer-brand-area">
-            <div className="footer-brand-left">
-              <img src="/bora-brasil.png" alt="Bora Brasil" className="footer-logo-main" />
-              <div className="footer-event-tag">APAS 2026!</div>
-            </div>
-            <div className="brand-divider"></div>
             <div className="footer-brand-right">
-              <img src="/skala-lola-preto.png" alt="Skala & Lola" className="footer-logo-secondary" />
+              <img src="/beautyfair/beautyfair-logo.png" alt="Beauty Fair" style={{ maxHeight: '45px', width: 'auto' }} />
             </div>
           </div>
         </footer>
@@ -1038,24 +1039,24 @@ const Dashboard: React.FC = () => {
         <div className="modal-overlay modal-booking">
           <div className="modal-content">
             <div className="modal-top-title">
-              <RxCalendar /> Portal de Agendamentos de Salas
+              <RxCalendar /> Portal de Agendamento de Salas
             </div>
 
             <div className="modal-inner-container">
-              <div className={`unified-header ${selectedRoom.nm_room.toLowerCase().includes('skala') ? 'skala' : selectedRoom.nm_room.toLowerCase().includes('bora') ? 'bora' : 'lola'}`}>
+              <div className={`unified-header ${getRoomTheme(selectedRoom.nm_room)}`}>
                 <span className="header-dot">●</span> Sala {selectedRoom.nm_room}
               </div>
               
               <img 
                 className="modal-banner-img"
-                src={selectedRoom.nm_room.toLowerCase().includes('bora') ? "/bora-brasil-modal.png" : (selectedRoom.nm_room.toLowerCase().includes('skala') ? "/skala-modal.png" : "/lola-modal.png")} 
+                src={getRoomImage(selectedRoom.nm_room)} 
               />
               
               <div className="modal-info-bar premium" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', textAlign: 'left' }}>
                   <div className="info-row">
                     <span>Agendamento para:</span>
-                    <strong>{tempDate.split('-')[2]} de maio de 2026</strong>
+                    <strong>{tempDate.split('-')[2]} de setembro de 2026</strong>
                   </div>
                   
                   <div className="info-row">
@@ -1149,13 +1150,13 @@ const Dashboard: React.FC = () => {
             </div>
 
             <div className="modal-inner-container">
-              <div className={`unified-header ${selectedRoom.nm_room.toLowerCase().includes('skala') ? 'skala' : selectedRoom.nm_room.toLowerCase().includes('bora') ? 'bora' : 'lola'}`}>
+              <div className={`unified-header ${getRoomTheme(selectedRoom.nm_room)}`}>
                 <span className="header-dot">●</span> Sala {selectedRoom.nm_room}
               </div>
               
               <img 
                 className="modal-banner-img"
-                src={selectedRoom.nm_room.toLowerCase().includes('bora') ? "/bora-brasil-modal.png" : (selectedRoom.nm_room.toLowerCase().includes('skala') ? "/skala-modal.png" : "/lola-modal.png")} 
+                src={getRoomImage(selectedRoom.nm_room)} 
               />
               
               <div className="modal-info-bar premium">
@@ -1187,7 +1188,7 @@ const Dashboard: React.FC = () => {
                   <div className="edit-input-wrapper">
                     <label className="edit-input-label"><RxCalendar /> DATA</label>
                     <CustomSelect 
-                      options={eventDates.map(d => ({ value: d, label: `${d.split('-')[2]} de maio de 2026` }))}
+                      options={eventDates.map(d => ({ value: d, label: `${d.split('-')[2]} de setembro de 2026` }))}
                       value={tempDate}
                       onChange={(val: string) => setTempDate(val)}
                     />
@@ -1196,10 +1197,7 @@ const Dashboard: React.FC = () => {
                   <div className="edit-input-wrapper">
                     <label className="edit-input-label"><FiClock /> HORÁRIO</label>
                     <CustomSelect 
-                      options={timeSlots.filter(t => {
-                        if (tempDate === '2026-05-21') return parseInt(t.split(':')[0]) <= 17;
-                        return true;
-                      }).map(t => {
+                      options={getTimeSlotsForDate(tempDate).map(t => {
                         const isOccupied = bookings.some(b => 
                           b.id_room === bookingToEdit.id_room && 
                           b.dt_booking === tempDate && 
