@@ -175,7 +175,7 @@ const Dashboard: React.FC = () => {
     if (date?.endsWith('09-05')) {
       return ['12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
     }
-    return ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+    return ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
   };
 
   const getRoomTheme = (roomName: string) => {
@@ -811,7 +811,7 @@ const Dashboard: React.FC = () => {
             return (
               <div key={room.id_room} className={`room-card ${theme}`} style={{opacity: access ? 1 : 0.7}}>
                 <div className={`room-header ${theme}`}>
-                  Sala {room.nm_room}
+                  {room.nm_room}
                 </div>
                 <img className="room-image" src={imageUrl} alt={room.nm_room} />
                 
@@ -1044,7 +1044,7 @@ const Dashboard: React.FC = () => {
 
             <div className="modal-inner-container">
               <div className={`unified-header ${getRoomTheme(selectedRoom.nm_room)}`}>
-                <span className="header-dot">●</span> Sala {selectedRoom.nm_room}
+                <span className="header-dot">●</span> {selectedRoom.nm_room}
               </div>
               
               <img 
@@ -1151,7 +1151,7 @@ const Dashboard: React.FC = () => {
 
             <div className="modal-inner-container">
               <div className={`unified-header ${getRoomTheme(selectedRoom.nm_room)}`}>
-                <span className="header-dot">●</span> Sala {selectedRoom.nm_room}
+                <span className="header-dot">●</span> {selectedRoom.nm_room}
               </div>
               
               <img 
@@ -1422,13 +1422,13 @@ const Dashboard: React.FC = () => {
                                     setSelectedUserAccess(prev => [...prev, r.id_room]);
                                     toast.error('Erro ao remover permissão');
                                   } else {
-                                    toast.success(`Acesso à Sala ${r.nm_room} removido`);
+                                    toast.success(`Acesso a ${r.nm_room} removido`);
                                   }
                                 }
                                 await fetchInitialData();
                               }} 
                             />
-                            <span className="permission-label">Sala {r.nm_room}</span>
+                            <span className="permission-label">{r.nm_room}</span>
                           </label>
                         ))}
                      </div>
@@ -1495,7 +1495,7 @@ const Dashboard: React.FC = () => {
                <div className="admin-input-group staggered-field" style={{"--field-index": 3} as any}>
                 <label className="admin-label"><FiPhone style={{marginRight: '8px'}} /> Telefone (WhatsApp)</label>
                 <PhoneInput 
-                  className="admin-input"
+                  className="admin-input" 
                   placeholder="(ddd) 99999-9999" 
                   value={newUserForm.nu_phone}
                   onChange={(val: string) => setNewUserForm({ ...newUserForm, nu_phone: val })}
@@ -1534,7 +1534,7 @@ const Dashboard: React.FC = () => {
                             }
                           }} 
                         />
-                        <span className="permission-label">Sala {r.nm_room}</span>
+                        <span className="permission-label">{r.nm_room}</span>
                       </label>
                     ))}
                   </div>
