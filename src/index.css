@@ -1278,15 +1278,19 @@ img {
 }
 
 .instruction-item .icon-cal {
-  color: var(--primary-green);
+  color: #dd7386;
 }
 
 .instruction-item .icon-room {
-  color: var(--accent-orange);
+  color: #efb594;
 }
 
-.instruction-item .icon-mail {
-  color: var(--status-available-bg);
+.instruction-item .icon-mail-confirm {
+  color: #a5d8ba;
+}
+
+.instruction-item .icon-mail-info {
+  color: #d4dd9a;
 }
 
 .instruction-item p {

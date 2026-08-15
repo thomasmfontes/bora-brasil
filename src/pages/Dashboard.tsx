@@ -884,7 +884,7 @@ const Dashboard: React.FC = () => {
             </div>
 
             <div className="instruction-item">
-              <TfiEmail className="icon-mail" />
+              <TfiEmail className="icon-mail-confirm" />
               <p>
                 Confirme sua reserva em poucos cliques.<br/>
                 Em caso de dúvidas ou necessidade de suporte, procure nossa equipe no local. Agradecemos sua organização e desejamos ótimos encontros!
@@ -892,7 +892,7 @@ const Dashboard: React.FC = () => {
             </div>
 
             <div className="instruction-item">
-              <TfiEmail className="icon-mail" />
+              <TfiEmail className="icon-mail-info" />
               <p>Após agendar, tanto o solicitante quanto o convidado receberão um e-mail de confirmação.</p>
             </div>
           </div>
