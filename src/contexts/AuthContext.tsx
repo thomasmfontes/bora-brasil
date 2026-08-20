@@ -44,7 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchProfile = async (userId: string, email?: string) => {
     try {
       // 1. Tentar buscar por id_auth_user
-      let { data, error } = await supabase
+      let { data } = await supabase
         .from('t_profiles')
         .select('*')
         .eq('id_auth_user', userId)
