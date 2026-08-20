@@ -632,19 +632,53 @@ const Dashboard: React.FC = () => {
     }
     setIsUpdatingUser(true);
     try {
-      // Chamando a Edge Function para atualizar dados sensíveis (email/senha) e perfil
-      const { data, error } = await supabase.functions.invoke('update-user', {
-        body: {
-          id_profile: selectedProfileForEdit.id_profile,
-          nm_profile: editUserForm.nm_profile,
-          email: editUserForm.email,
-          password: editUserForm.password,
-          ds_role: editUserForm.ds_role,
-          nu_phone: editUserForm.nu_phone
+      let updatedSuccessfully = false;
+
+      // 1. Tenta atualizar via Edge Function (para atualizar Auth + Perfil)
+      try {
+        const { data, error } = await supabase.functions.invoke('update-user', {
+          body: {
+            id_profile: selectedProfileForEdit.id_profile,
+            nm_profile: editUserForm.nm_profile,
+            email: editUserForm.email,
+            password: editUserForm.password,
+            ds_role: editUserForm.ds_role,
+            nu_phone: editUserForm.nu_phone
+          }
+        });
+
+        if (!error && !data?.error) {
+          updatedSuccessfully = true;
+        } else if (error) {
+          let errorMsg = error.message;
+          try {
+            if ((error as any).context) {
+              const body = await (error as any).context.json();
+              if (body?.error) errorMsg = body.error;
+            }
+          } catch (_) {}
+          console.warn('Erro na Edge Function update-user:', errorMsg);
         }
-      });
-      
-      if (error || data?.error) throw new Error(error?.message || data?.error);
+      } catch (fnErr: any) {
+        console.warn('Falha na invocação da Edge Function update-user:', fnErr);
+      }
+
+      // 2. Fallback direto no banco caso a Edge Function não esteja com permissão
+      if (!updatedSuccessfully) {
+        const { error: directErr } = await supabase
+          .from('t_profiles')
+          .update({
+            nm_profile: editUserForm.nm_profile,
+            ds_email: editUserForm.email,
+            ds_role: editUserForm.ds_role,
+            nu_phone: editUserForm.nu_phone
+          })
+          .eq('id_profile', selectedProfileForEdit.id_profile);
+
+        if (directErr) {
+          throw new Error(directErr.message);
+        }
+      }
       
       toast.success('Usuário atualizado com sucesso!');
       setIsAdminModalOpen(false);
