@@ -36,6 +36,11 @@ const formatPhone = (value: string) => {
   return value.slice(0, 15);
 };
 
+const formatCapitalize = (value: string) => {
+  if (!value) return '';
+  return value.replace(/(^|\s+)([a-zà-ÿ])/gi, (_match, space, letter) => space + letter.toUpperCase());
+};
+
 const CustomSelect = ({ options, value, onChange, placeholder }: any) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -188,7 +193,7 @@ const Dashboard: React.FC = () => {
   };
 
   const getRoomImage = (_roomName: string) => {
-    return '/beautyfair/sala-default.png';
+    return '/beautyfair/sala-2.jpg.jpeg';
   };
 
   useEffect(() => {
@@ -271,6 +276,8 @@ const Dashboard: React.FC = () => {
     
     if (field === 'phone') {
       finalValue = formatPhone(value);
+    } else if (field === 'name' || field === 'client') {
+      finalValue = formatCapitalize(value);
     }
 
     (newParticipants[index] as any)[field] = finalValue;
@@ -774,17 +781,11 @@ const Dashboard: React.FC = () => {
     <>
       <header className="main-header">
         <div className="header-content-wrapper">
-          <div className="header-logos-row">
-            <div className="header-left-logo">
-              <img src="/beautyfair/beautyfair-logo.png" alt="Beauty Fair International" className="logo-main" />
-            </div>
-            
-            <div className="header-right-logos">
-              <div style={{ textAlign: 'right', color: '#fff' }}>
-                <span style={{ fontSize: '1.5rem', fontWeight: 900, fontFamily: 'var(--font-display)', letterSpacing: '1px' }}>SKALA</span>
-                <span style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, opacity: 0.85, marginTop: '-3px' }}>BRASIL</span>
-              </div>
-            </div>
+          <div className="header-brand-unit">
+            <img src="/beautyfair/beautyfair-logo.png" alt="Beauty Fair International" className="header-logo-beauty" />
+            <div className="header-brand-divider"></div>
+            <img src="/beautyfair/portal-brand-branco.png" alt="Skala Brasil" className="header-logo-skala" />
+            <img src="/beautyfair/skala-badge.png" alt="Skala #1 do Brasil" className="header-badge-skala" />
           </div>
         </div>
       </header>
@@ -897,10 +898,9 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="footer-brand-area">
-            <div className="footer-brand-right">
-              <img src="/beautyfair/beautyfair-logo.png" alt="Beauty Fair" style={{ maxHeight: '45px', width: 'auto' }} />
-            </div>
+          <div className="footer-brand-logos-centered">
+            <img src="/beautyfair/beautyfair-logo-preto.png" alt="Beauty Fair" className="footer-brand-img" />
+            <img src="/beautyfair/portal-brand-footer.png" alt="Marcas do Portal" className="footer-brand-img" />
           </div>
         </footer>
       </main>
@@ -1049,7 +1049,8 @@ const Dashboard: React.FC = () => {
               
               <img 
                 className="modal-banner-img"
-                src={getRoomImage(selectedRoom.nm_room)} 
+                src="/beautyfair/skala-modal.png"
+                alt="Skala Sala"
               />
               
               <div className="modal-info-bar premium" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
@@ -1156,7 +1157,8 @@ const Dashboard: React.FC = () => {
               
               <img 
                 className="modal-banner-img"
-                src={getRoomImage(selectedRoom.nm_room)} 
+                src="/beautyfair/skala-modal.png"
+                alt="Skala Sala"
               />
               
               <div className="modal-info-bar premium">
@@ -1330,7 +1332,7 @@ const Dashboard: React.FC = () => {
                           className="admin-input"
                           placeholder="Nome do usuário" 
                           value={editUserForm.nm_profile} 
-                          onChange={e => setEditUserForm({ ...editUserForm, nm_profile: e.target.value })} 
+                          onChange={e => setEditUserForm({ ...editUserForm, nm_profile: formatCapitalize(e.target.value) })} 
                         />
                       </div>
 
@@ -1464,7 +1466,7 @@ const Dashboard: React.FC = () => {
                   className="admin-input"
                   placeholder="Nome do usuário" 
                   value={newUserForm.nm_profile} 
-                  onChange={e => setNewUserForm({ ...newUserForm, nm_profile: e.target.value })} 
+                  onChange={e => setNewUserForm({ ...newUserForm, nm_profile: formatCapitalize(e.target.value) })} 
                 />
               </div>
 
@@ -1618,7 +1620,6 @@ const Dashboard: React.FC = () => {
       />
       </div>
       <footer className="institutional-footer">
-        <div className="footer-orange-bar"></div>
         <div className="footer-content">
           <div className="footer-logos-wrapper">
             <div className="footer-logo-group">
