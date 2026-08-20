@@ -66,21 +66,24 @@ body {
 body::before {
   content: '';
   position: fixed;
-  top: 0;
+  top: -80px;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: -80px;
   width: 100vw;
-  height: 100vh;
-  height: 100dvh;
+  height: calc(100vh + 160px);
+  height: calc(100lvh + 160px);
   background-image: url('/beautyfair/fundo-principal-skala.jpg');
   background-size: cover;
-  background-position: center;
+  background-position: center center;
   background-repeat: no-repeat;
   z-index: -1;
   pointer-events: none;
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
 }
 
 img {
